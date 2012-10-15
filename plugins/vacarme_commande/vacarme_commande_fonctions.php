@@ -44,10 +44,4 @@ if (!defined("_ECRIRE_INC_VERSION")) return;
          $tva = tva_applicable($type_client,$pays);
       return $tva;
    }
-
-   function filtre_arrondi($float){
-
-      return $float;
-   }
-
 ?>
