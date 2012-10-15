@@ -30,15 +30,15 @@
                   #SET{prix_unitaire,#PRIX_HT*{#OBJET,#ID_OBJET}}
                   [(#SET{tva_objet,#GET{prix_unitaire}|mult{#CONFIG{produits/taxe}}|mult{#QUANTITE}})]
                   [(#SET{cumul_tva,[(#GET{cumul_tva}|plus{[(#GET{tva_objet})]})]})]
-                  [(#SET{soustotal,#GET{soustotal}|plus{#GET{prix_unitaire}|mult{#QUANTITE}}})]
+                  [(#SET{soustotal,#GET{soustotal}|plus{#GET{prix_unitaire}|mult{#QUANTITE}}|round{2}})]
 
                <tr class="emplette[ (#ENV{erreurs}|table_valeur{quantites}|table_valeur{#OBJET}|table_valeur{#ID_OBJET}|?{erreur})]">
                   <td class="description">
                      #INCLURE{fond=inclure/emplette,objet=#OBJET,id_objet=#ID_OBJET,id_panier=#ID_PANIER,numero=#NUMERO}
                   </td>
-                  <td class="prix_unitaire ar">[(#GET{prix_unitaire}|prix_formater)]</td>
+                  <td class="prix_unitaire ar">[(#GET{prix_unitaire}|round{2}|prix_formater)]</td>
                   <td class="quantite ar"><input type="text" class="text" size="3" name="quantites[#OBJET][#ID_OBJET]" value="[(#ENV{quantites}|table_valeur{#OBJET}|table_valeur{#ID_OBJET}|sinon{#QUANTITE})]" /></td>
-                  <td class="montant ar">[(#GET{prix_unitaire}|mult{#QUANTITE}|prix_formater)]</td>
+                  <td class="montant ar">[(#GET{prix_unitaire}|mult{#QUANTITE}|round{2}|prix_formater)]</td>
                </tr>
                </BOUCLE_contenu_panier>
                <tr class="panier-pied livraison ar">

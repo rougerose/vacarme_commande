@@ -44,7 +44,7 @@
    #SET{prix_unitaire,#PRIX_HT*{#OBJET,#ID_OBJET}}
    [(#SET{tva_objet,#GET{prix_unitaire}|mult{#CONFIG{produits/taxe}}|mult{#QUANTITE}})]
    [(#SET{cumul_tva, #GET{cumul_tva}|plus{#GET{tva_objet}}})]
-   [(#SET{soustotal,#GET{soustotal}|plus{#GET{prix_unitaire}|prix_formater|mult{#QUANTITE}}})]
+   [(#SET{soustotal,#GET{soustotal}|plus{#GET{prix_unitaire}|round{2}|mult{#QUANTITE}}|prix_formater})]
    </BOUCLE_commande_details>
    #SET{commande, #ARRAY{details, #GET{details}}}
 </BOUCLE_commande>
@@ -73,9 +73,9 @@
                </li>
             </ul>]
          </td>
-         <td class="prix_unitaire ar">[(#VALEUR|table_valeur{prix}|prix_formater)]</td>
+         <td class="prix_unitaire ar">[(#VALEUR|table_valeur{prix}|round{2}|prix_formater)]</td>
          <td class="quantite ar">[(#VALEUR|table_valeur{quantite})]</td>
-         <td class="montant ar">[(#VALEUR|table_valeur{prix}|mult{#VALEUR|table_valeur{quantite}}|prix_formater)]</td>
+         <td class="montant ar">[(#VALEUR|table_valeur{prix}|mult{#VALEUR|table_valeur{quantite}}|round{2}|prix_formater)]</td>
       </tr>
       </BOUCLE_details>
       <tr class="panier-pied livraison ar">
@@ -84,7 +84,7 @@
       </tr>
       <tr class="panier-pied soustotal ar">
          <td colspan="3"><:vacarme_commande:soustotal:></td>
-         <td>[(#GET{soustotal}|prix_formater)]</td>
+         <td>[(#GET{soustotal}|round{2}|prix_formater)]</td>
       </tr>
       [(#GET{tva_applicable}|oui)
       <tr class="panier-pied taxes ar">
@@ -105,55 +105,30 @@
 </table>
 </BOUCLE_test_contexte_commande>
 [(#REM) Les formulaires de paiement ]
-[(#ENV{contexte}|=={paiements}|oui)
-   <div id="paiements" class="tabs">
-      <h2><:vacarme_commande:votre_reglement:></h2>
-      <ul>
-         <li><a href="#paypal">Paypal</a></li>
-         <li><a href="#cheque">Chèque</a></li>
-         <li><a href="#virement">Virement bancaire</a></li>
-      </ul>
-      <div id="paypal" class="option cf">
-         <p class="infos"><:vacarme_commande:paiement_paypal_message_explication:></p>
-         [(#FORMULAIRE_PAYPAL{#ARRAY{
-            custom,payer_commande,
-            libelle,Commande #GET{reference},
-            identifiant,#GET{id_commande},
-            tva_applicable,#GET{tva_applicable},
-            cancel,#URL_PAGE{annulation}|parametre_url{commande,#GET{id_commande}},
-            redirect_ok, #URL_ACTION_AUTEUR{
-               supprimer_panier_encours,
-               "",
-               #URL_PAGE{confirmation}
-                  |parametre_url{commande,#GET{id_commande}}
-                  |parametre_url{p,p}
-                  |parametre_url{r,1}},
-            details,#GET{details},
-         }})]
-      </div><!-- #paypal -->
 
-      <div id="cheque" class="option cf">
-         <p class="infos"><:vacarme_commande:paiement_cheque_message_explication:></p>
-         [(#FORMULAIRE_PAIEMENTS_ALTERNATIFS{#ARRAY{
-            type_paiement,cheque,
-            commande_numero,#GET{reference},
-            id_auteur,#GET{id_auteur},
-            id_commande,#GET{id_commande},
-            details,#GET{details},
-            tva_applicable,#GET{tva_applicable}
-         },#URL_PAGE{confirmation}|parametre_url{p,c}})]
-      </div><!-- #cheque -->
+<BOUCLE_test_contexte_paiements(CONDITION){si #ENV{contexte}|=={paiements}}>
+<BOUCLE_transaction(COMMANDES_TRANSACTIONS){tout}{id_commande=#GET{id_commande}}>
+<div id="paiements" class="tabs">
+   <h2><:vacarme_commande:votre_reglement:></h2>
+   <ul>
+      <li><a href="#paypal">Paypal</a></li>
+      <li><a href="#cheque">Chèque</a></li>
+      <li><a href="#virement">Virement bancaire</a></li>
+   </ul>
+   <div id="paypal" class="option cf">
+      <p class="infos"><:vacarme_commande:paiement_paypal_message_explication:></p>
+      #PAYER_ACTE{paypal,#ID_TRANSACTION,#TRANSACTION_HASH,''}
+   </div><!-- #paypal -->
 
-      <div id="virement" class="option cf">
-         <p class="infos"><:vacarme_commande:paiement_virement_message_explication:></p>
-         [(#FORMULAIRE_PAIEMENTS_ALTERNATIFS{#ARRAY{
-            type_paiement,virement,
-            commande_numero,#GET{reference},
-            id_auteur,#GET{id_auteur},
-            id_commande,#GET{id_commande},
-            details,#GET{details},
-            tva_applicable,#GET{tva_applicable}
-         },#URL_PAGE{confirmation}|parametre_url{p,v}})]
-      </div><!-- #virement -->
-   </div><!-- .tabs -->
-]
+   <div id="cheque" class="option cf">
+      <p class="infos"><:vacarme_commande:paiement_cheque_message_explication:></p>
+
+   </div><!-- #cheque -->
+
+   <div id="virement" class="option cf">
+      <p class="infos"><:vacarme_commande:paiement_virement_message_explication:></p>
+
+   </div><!-- #virement -->
+</div><!-- .tabs -->
+</BOUCLE_transaction>
+</BOUCLE_test_contexte_paiements>

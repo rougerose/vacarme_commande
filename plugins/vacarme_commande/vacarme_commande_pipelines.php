@@ -95,15 +95,33 @@
    // ===========================
    // flux depuis creer_commande_encours : on ajoute l'id de commande dans sa référence
    function vacarme_commande_post_insertion ($flux) {
-      if ($flux['args']['table'] == 'spip_commandes' and $flux['args']['id_objet'] and $flux['data']['reference']) {
+      if ($flux['args']['table'] == 'spip_commandes' and $flux['args']['id_objet']) {
          $id_commande = intval($flux['args']['id_objet']);
          $reference = $flux['data']['reference']; // de la forme aaaammjj-id_auteur
          $reference = $reference."-".$id_commande; // devient aaaammjj-id_auteur-id_commande
          sql_updateq("spip_commandes", array('reference' => $reference), "id_commande=$id_commande");
          // on renvoie dans le flux la nouvelle référence
          $flux['data']['reference'] = $reference;
-         return $flux;
+
+
+         // récupération des prix de chaque élément
+         if ($montants = sql_allfetsel('prix_unitaire_ht, taxe', 'spip_commandes_details', 'id_commande='.$id_commande)) {
+             foreach ($montants as $m) {
+                $total_ht += round($m['prix_unitaire_ht'],2);
+                $total_ttc += ($m['prix_unitaire_ht']*($m['taxe']+1));
+             }
+             $total_ht = round($total_ht,2);
+             $total_ttc = round($total_ttc,2);
+             #var_dump($total_ht,$total_ttc); die();
+         }
+
+         // ajout des infos de transactions dans la table commandes_transactions
+         $inserer_transaction = charger_fonction('inserer_transaction','inc/');
+         $id_transaction = $inserer_transaction($id_commande,$reference,$total_ht,$total_ttc);
+         if ($id_transaction == 0)
+            spip_log("Pas d'id_transaction","vacarme_debug");
       }
+      return $flux;
    }
 
 

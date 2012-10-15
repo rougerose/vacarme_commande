@@ -25,6 +25,10 @@ function vacarme_commande_upgrade($nom_meta_base_version,$version_cible) {
             maj_tables('spip_commandes');
             ecrire_meta($nom_meta_base_version, $current_version="0.2");
          }
+         if (version_compare($current_version,"0.3","<")){
+            creer_base(); // ajout de spip_commandes_transactions
+            ecrire_meta($nom_meta_base_version, $current_version="0.3");
+         }
       }
    }
 
@@ -44,6 +48,8 @@ function vacarme_commande_vider_tables($nom_meta_base_version) {
    sql_alter("TABLE spip_commandes DROP paiement");
 
    sql_alter("TABLE spip_commandes_details DROP numero");
+
+   sql_drop_table('spip_commandes_transactions');
 
    effacer_meta($nom_meta_base_version);
 }

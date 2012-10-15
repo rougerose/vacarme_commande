@@ -4,7 +4,7 @@
    <licence>GNU/GLP</licence>
    <icon>img/vacarme_commande-32.png</icon>
    <version>0.1</version>
-   <version_base>0.2</version_base>
+   <version_base>0.3</version_base>
    <description>
       Vacarme Commande
    </description>
@@ -16,6 +16,10 @@
       <nom>autoriser</nom>
       <inclure>inc/vacarme_commande_autorisations.php</inclure>
    </pipeline>
+	<pipeline>
+		<nom>declarer_tables_interfaces</nom>
+		<inclure>base/vacarme_commande.php</inclure>
+	</pipeline>
    <pipeline>
       <nom>declarer_tables_principales</nom>
       <inclure>base/vacarme_commande.php</inclure>
@@ -53,6 +57,7 @@
    <utilise id="zcommerce" version="[0.3.2;]" /><!-- à supprimer en prod ? -->
    <utilise id="snippets" version="[0.2.0;]" />
    <utilise id="contacts" version="[1.13.5;]" />
+   <utiliser id="bank" version="[2.1.1;]" />
    <necessite id="SPIP" version="[2.1.10;2.1.99]" />
    <necessite id="Z" version="[1.7.19;]" />
    <necessite id="spip_bonux" version="[2.2.17;]" />

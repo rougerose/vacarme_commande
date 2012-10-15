@@ -8,6 +8,4 @@
       $tva = (($type_client == 'particulier') AND (in_array($pays,$UE)) ) ? true : false;
       return $tva;
    }
-
-
 ?>

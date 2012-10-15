@@ -37,4 +37,12 @@ if (!defined("_ECRIRE_INC_VERSION")) return;
       $texte = sprintf("%.2f",$texte);
       return $texte;
    }
+
+   function filtre_tva_applicable($tva=true,$type_client,$pays) {
+      include_spip('inc/vacarme_commande');
+      if (function_exists('tva_applicable'))
+         $tva = tva_applicable($type_client,$pays);
+      return $tva;
+   }
+
 ?>
