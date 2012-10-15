@@ -5,9 +5,9 @@
    <input type="hidden" name="item_number_#GET{numero}" value="#GET{numero}" />
    [<input type="hidden" name="item_name_#GET{numero}" value="(#VALEUR|table_valeur{descriptif})[ (#VALEUR|table_valeur{detail}|html_entity_decode|entites_html)]" />]
    [<input type="hidden" name="quantity_#GET{numero}" value="(#VALEUR|table_valeur{quantite})" />]
-   [<input type="hidden" name="amount_#GET{numero}" value="(#VALEUR|table_valeur{prix}|round{2})" />]
+   [<input type="hidden" name="amount_#GET{numero}" value="(#VALEUR|table_valeur{prix}|decimale)" />]
    [(#ENV{tva_applicable}|oui)
-   [<input type="hidden" name="tax_#GET{numero}" value="(#VALEUR|table_valeur{prix}|round{2}|mult{#GET{taux_tva}}|round{2})" />]]
+   [<input type="hidden" name="tax_#GET{numero}" value="(#VALEUR|table_valeur{prix}|mult{#GET{taux_tva}}|decimale)" />]]
    [(#ENV{tva_applicable}|non)
    <input type="hidden" name="tax_#GET{numero}" value="0" />]
 </BOUCLE_details>

@@ -45,4 +45,9 @@ if (!defined("_ECRIRE_INC_VERSION")) return;
       return $tva;
    }
 
+   function filtre_arrondi($float){
+
+      return $float;
+   }
+
 ?>

@@ -44,7 +44,7 @@
    #SET{prix_unitaire,#PRIX_HT*{#OBJET,#ID_OBJET}}
    [(#SET{tva_objet,#GET{prix_unitaire}|mult{#CONFIG{produits/taxe}}|mult{#QUANTITE}})]
    [(#SET{cumul_tva, #GET{cumul_tva}|plus{#GET{tva_objet}}})]
-   [(#SET{soustotal,#GET{soustotal}|plus{#GET{prix_unitaire}|round{2}|mult{#QUANTITE}}|prix_formater})]
+   [(#SET{soustotal,#GET{soustotal}|plus{#GET{prix_unitaire}|decimale|mult{#QUANTITE}}|prix_formater})]
    </BOUCLE_commande_details>
    #SET{commande, #ARRAY{details, #GET{details}}}
 </BOUCLE_commande>
@@ -73,9 +73,9 @@
                </li>
             </ul>]
          </td>
-         <td class="prix_unitaire ar">[(#VALEUR|table_valeur{prix}|round{2}|prix_formater)]</td>
+         <td class="prix_unitaire ar">[(#VALEUR|table_valeur{prix}|decimale|prix_formater)]</td>
          <td class="quantite ar">[(#VALEUR|table_valeur{quantite})]</td>
-         <td class="montant ar">[(#VALEUR|table_valeur{prix}|mult{#VALEUR|table_valeur{quantite}}|round{2}|prix_formater)]</td>
+         <td class="montant ar">[(#VALEUR|table_valeur{prix}|mult{#VALEUR|table_valeur{quantite}}|decimale|prix_formater)]</td>
       </tr>
       </BOUCLE_details>
       <tr class="panier-pied livraison ar">
@@ -84,14 +84,13 @@
       </tr>
       <tr class="panier-pied soustotal ar">
          <td colspan="3"><:vacarme_commande:soustotal:></td>
-         <td>[(#GET{soustotal}|round{2}|prix_formater)]</td>
+         <td>[(#GET{soustotal}|decimale|prix_formater)]</td>
       </tr>
       [(#GET{tva_applicable}|oui)
       <tr class="panier-pied taxes ar">
          <td colspan="3"><:vacarme_commande:tva:>[ ((#CONFIG{produits/taxe}|mult{100})%)]</td>
          <td class="montant">[(#GET{cumul_tva}|prix_formater)]</td>
-      </tr>]
-      [(#GET{tva_applicable}|oui)
+      </tr>
       <tr class="panier-pied total_ttc ar">
          <td colspan="3"><:vacarme_commande:total_ttc:></td>
          <td class="montant">[(#PRIX{commande,#ID_COMMANDE})]</td>
