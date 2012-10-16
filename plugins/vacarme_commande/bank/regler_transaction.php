@@ -31,8 +31,8 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
 function bank_regler_transaction_dist($id_transaction,$message="",$row_prec=null,$notifier = true){
 
 	if (!strlen($message)) {
-		//$bank_messager_reglement_enregistre = charger_fonction('bank_messager_reglement_enregistre','inc');
-		//$message = $bank_messager_reglement_enregistre($id_transaction);
+		$bank_messager_reglement_enregistre = charger_fonction('bank_messager_reglement_enregistre','inc');
+		$message = $bank_messager_reglement_enregistre($id_transaction);
 	}
 
 	if (!$row_prec)
