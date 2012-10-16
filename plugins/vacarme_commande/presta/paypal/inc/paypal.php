@@ -123,7 +123,7 @@ function bank_paypal_recoit_notification(){
  * @return array
  */
 function paypal_echec_transaction($id_transaction,$message){
-	sql_updateq("spip_transactions",
+	sql_updateq("spip_commandes_transactions",
 	  array('message'=>$message,'statut'=>'echec'),
 	  "id_transaction=".intval($id_transaction)
 	);
@@ -141,8 +141,12 @@ function bank_paypal_verifie_notification($args){
 
 	// envoyer la demande de verif en post
 	// attention, c'est une demande en ssl, il faut avoir un php qui le supporte
-	$bank_recuperer_post_https = charger_fonction("bank_recuperer_post_https","inc");
-	list($resultat,$erreur,$erreur_msg) = $bank_recuperer_post_https(_PAYPAL_URL_SERVICES,$args);
+	//$bank_recuperer_post_https = charger_fonction("bank_recuperer_post_https","inc");
+	//list($resultat,$erreur,$erreur_msg) = $bank_recuperer_post_https(_PAYPAL_URL_SERVICES,$args);
+   $ipnlistener_recuperer_post_https = charger_fonction("ipnlistener_recuperer_post_https","inc");
+   #if (!$ipnlistener_recuperer_post_https) spip_log("pas de fonction ipnlistener_recuperer_post_https","paypal");
+   list($resultat,$erreur,$erreur_msg) = $ipnlistener_recuperer_post_https($args);
+   spip_log("fonction ipnlistener, resultat ".$resultat." erreur ".$erreur." message d'erreur ".$erreur_msg,"paypal");
 
 	if (strncmp($resultat,'VERIFIE',7)==0)
 		return true;
