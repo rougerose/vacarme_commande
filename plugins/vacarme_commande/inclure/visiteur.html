@@ -4,7 +4,10 @@
 [(#SET{quantite,#GET{quantite}|plus{#QUANTITE}})]
 </BOUCLE_contenu_panier>
 <BOUCLE_contact(CONTACTS_LIENS spip_contacts){id_auteur=#SESSION{id_auteur}}{id_auteur>0}>
-#SET{nom, #PRENOM #NOM} #SET{id_contact,#ID_CONTACT}
+#SET{nom, #PRENOM #NOM} #SET{id_contact,#ID_CONTACT} #SET{type_client,#TYPE_CLIENT}
+<BOUCLE_pays(ADRESSES adresses_liens){id_auteur}>
+   [(#SET{tva_applicable,#GET{tva_applicable}|tva_applicable{#GET{type_client},#PAYS}})]
+</BOUCLE_pays>
 </BOUCLE_contact>
 <div class="visiteur resume grid-12 cf">
       [(#REM) bienvenue ]
@@ -25,11 +28,12 @@
       </div><!-- .bienvenue -->
 
       [(#REM) résumé du panier ]
+      [(#GET{tva_applicable}|?{[(#SET{prix,#PRIX{panier,#SESSION{id_panier},0}})],[(#SET{prix,#PRIX_HT{panier,#SESSION{id_panier},2}})]})]
       <div class="grid-8 panier ajax">
          <p>
             <a href="#URL_PAGE{panier}">
                [(#GET{quantite}|>{0}|?{
-                  [<span class="nombre">(#GET{quantite}|singulier_ou_pluriel{'vacarme_commande:panier_article_un', 'vacarme_commande:panier_articles_plusieurs'})</span> <span class="prix">#PRIX{panier,#SESSION{id_panier}}</span>],
+                  [<span class="nombre">(#GET{quantite}|singulier_ou_pluriel{'vacarme_commande:panier_article_un', 'vacarme_commande:panier_articles_plusieurs'})</span> <span class="prix">#GET{prix}</span>],
                   [(#GET{quantite}) <:vacarme_commande:panier_article_singulier:>]
                })]
             </a>

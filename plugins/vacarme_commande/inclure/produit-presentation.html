@@ -29,7 +29,7 @@
    </div>
    [<div class="pied cf">
       (#ENV{composition}|=={numeros}|oui)
-      <p class="prix">#GET{prix_ttc}</p>
+      <p class="prix">#PRIX_HT</p>
       [(#BOUTON_ACTION{<:ajouter_au_panier:>,#URL_ACTION_AUTEUR{remplir_panier,produit-#ID_PRODUIT-1,#SELF},ajouter})]
    </div><!-- .pied -->]
 </li>

@@ -1,9 +1,10 @@
 #CACHE{0}
-#SET{tva_applicable,' '} #SET{pays_ue,#ARRAY{0,AT,1,BE,2,BG,3,CY,5,CZ,6,DK,7,EE,8,FI,9,FR,10,DE,11,GR,12,HU,13,IE,14,IT,15,LV,16,LT,17,LU,18,MT,19,NL,20,PL,21,PT,22,RO,23,SK,24,ES,25,SE,26,UK}}
 <BOUCLE_auteur(CONDITION){si #SESSION{id_auteur}}>
 <BOUCLE_tva_applicable(CONTACTS){id_auteur=#SESSION{id_auteur}}>
-[(#TYPE_CLIENT|=={organisation}|oui)#SET{tva_applicable,''}]
-<BOUCLE_pays(ADRESSES adresses_liens){id_auteur}>[(#PAYS|in_array{#GET{pays_ue}}|non) #SET{tva_applicable,''}]</BOUCLE_pays>
+   #SET{type_client,#TYPE_CLIENT}
+   <BOUCLE_pays(ADRESSES adresses_liens){id_auteur}>
+      [(#SET{tva_applicable,#GET{tva_applicable}|tva_applicable{#GET{type_client},#PAYS}})]
+   </BOUCLE_pays>
 </BOUCLE_tva_applicable>
 </BOUCLE_auteur>
 
@@ -27,42 +28,42 @@
             </thead>
             <tbody>
                <BOUCLE_contenu_panier(PANIERS_LIENS){id_panier=#ENV{_id_panier}}>
-                  #SET{prix_unitaire,#PRIX_HT*{#OBJET,#ID_OBJET}}
-                  [(#SET{tva_objet,#GET{prix_unitaire}|mult{#CONFIG{produits/taxe}}|mult{#QUANTITE}})]
-                  [(#SET{cumul_tva,[(#GET{cumul_tva}|plus{[(#GET{tva_objet})]})]})]
-                  [(#SET{soustotal,#GET{soustotal}|plus{#GET{prix_unitaire}|decimale|mult{#QUANTITE}}})]
-
+                  [(#SET{prix_unitaire,#PRIX*{#OBJET,#ID_OBJET}})]
+                  [(#GET{tva_applicable}|?{
+                     [(#SET{total,#GET{total}|plus{#GET{prix_unitaire}|mult{#QUANTITE}}})]
+                     ,
+                     [(#SET{prix_unitaire,#GET{prix_unitaire}|prixht})]
+                     [(#SET{total,#GET{total}|plus{#GET{prix_unitaire}|round{2}|mult{#QUANTITE}}})]
+                  })]
                <tr class="emplette[ (#ENV{erreurs}|table_valeur{quantites}|table_valeur{#OBJET}|table_valeur{#ID_OBJET}|?{erreur})]">
                   <td class="description">
                      #INCLURE{fond=inclure/emplette,objet=#OBJET,id_objet=#ID_OBJET,id_panier=#ID_PANIER,numero=#NUMERO}
                   </td>
-                  <td class="prix_unitaire ar">[(#GET{prix_unitaire}|decimale|prix_formater)]</td>
+                  <td class="prix_unitaire ar">[(#GET{prix_unitaire}|round{2}|prix_formater)]</td>
                   <td class="quantite ar"><input type="text" class="text" size="3" name="quantites[#OBJET][#ID_OBJET]" value="[(#ENV{quantites}|table_valeur{#OBJET}|table_valeur{#ID_OBJET}|sinon{#QUANTITE})]" /></td>
-                  <td class="montant ar">[(#GET{prix_unitaire}|mult{#QUANTITE}|decimale|prix_formater)]</td>
+                  <td class="montant ar">[(#GET{prix_unitaire}|round{2}|mult{#QUANTITE}|prix_formater)]</td>
                </tr>
                </BOUCLE_contenu_panier>
                <tr class="panier-pied livraison ar">
                   <td colspan="3"><:vacarme_commande:frais_port:></td>
-                  <td>0.00 &euro;</td>
-               </tr>
-               <tr class="panier-pied soustotal ar">
-                  <td colspan="3"><:vacarme_commande:soustotal:></td>
-                  <td>[(#GET{soustotal}|prix_formater)]</td>
-               </tr>
-               [(#GET{tva_applicable}|oui)
-               <tr class="panier-pied taxes ar">
-                  <td colspan="3"><:vacarme_commande:tva:>[ ((#CONFIG{produits/taxe}|mult{100})%)]</td>
-                  <td class="montant">[(#GET{cumul_tva}|prix_formater)]</td>
+                  <td>[(#VAL{0}|prix_formater)]</td>
                </tr>
                <tr class="panier-pied total_ttc ar">
                   <td colspan="3"><:vacarme_commande:total_ttc:></td>
-                  <td class="montant">[(#GET{soustotal}|plus{#GET{cumul_tva}}|prix_formater)] #PRIX{panier,#ENV{_id_panier}}</td>
-               </tr>]
-               [(#GET{tva_applicable}|non)
-               <tr class="panier-pied total_ttc ar">
-                  <td colspan="3"><:vacarme_commande:total_ht:></td>
-                  <td class="montant">[(#GET{soustotal}|prix_formater)]</td>
-               </tr>]
+                  <td class="montant">[(#GET{total}|prix_formater)]</td>
+               </tr>
+               <tr class="panier-pied taxes ar">
+                  <td colspan="3">
+                     <:vacarme_commande:tva_dont:>[ ((#CONFIG{produits/taxe}|mult{100})%)]
+                  </td>
+                  <td class="montant">
+                     [(#GET{tva_applicable}|?{
+                        [(#GET{total}|mult{#CONFIG{produits/taxe}}|prix_formater)]
+                        ,
+                        [(#VAL{0}|prix_formater)]
+                     })]
+                  </td>
+               </tr>
             </tbody>
          </table>
          <p class="boutons recalculer">

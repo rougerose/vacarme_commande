@@ -40,11 +40,12 @@
             })]
          </BOUCLE_cadeau>
       </BOUCLE_condition_cadeau>
+         [(#SET{prix_unitaire,#PRIX*{#OBJET,#ID_OBJET}|prixht})]
          [(#SET_PUSH{details, [(#ARRAY{
             descriptif, [(#DESCRIPTIF*|supprimer_numero)],
             detail, #GET{detail},
             quantite, #QUANTITE,
-            prix, #PRIX_HT*,
+            prix, #GET{prix_unitaire},
          })]})]
    </BOUCLE_commande_details>
       #SET{commande, #ARRAY{details, #GET{details}}}
@@ -61,11 +62,6 @@
 <input type="hidden" name="email" value="#GET{email}" />[
 (#REM) Les produits achetés ][
 (#INCLURE{fond=presta/paypal/payer/items,id_transaction,id_commande=#ID_COMMANDE,tva_applicable=#GET{tva_applicable},details=#GET{details}})]
-[(#REM)
-<input type="hidden" name="item_name_1" value="Bon de commande #ID_TRANSACTION" />
-<input type="hidden" name="amount_1" value="#MONTANT" />]
-
-
 <input type="hidden" name="cancel_return" value="[(#ENV*{url_cancel}|parametre_url{id_transaction,#ID_TRANSACTION}|parametre_url{transaction_hash,#TRANSACTION_HASH})]" />
 <input type="hidden" name="notify_url" value="#ENV*{url_notify}" />
 <input type="hidden" name="return" value="#ENV*{url_return}" />

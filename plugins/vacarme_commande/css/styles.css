@@ -609,7 +609,7 @@ ul.spip {list-style-type: square;}
    border-spacing:0;
    border-color: #000;
 }
-.table-commande th, .table-commande .livraison, .table-commande .taxes, .table-commande .soustotal, .table-commande .total_ttc {
+.table-commande th, .table-commande .livraison, .table-commande .soustotal, .table-commande .total_ttc {
    font: 1.25em/1 "HelveticaNeueLTStdCnBold","Helevetica Neue",Helvetica,sans-serif;
    border-bottom: 1px solid #000;
    border: 1px solid #000; border-width: 1px 0;
@@ -628,7 +628,8 @@ ul.spip {list-style-type: square;}
 .table-commande .emplette .description img{ vertical-align:middle; }
 .table-commande .emplette input.text{ text-align:center; width:2.5em; }
 .table-commande .total_ttc{ text-transform: uppercase; }
-.table-commande .total_ttc td {border-bottom-color: #000;}
+.table-commande .total_ttc td {border-width: 2px 0 2px; border-color: #000;}
+.table-commande .taxes td {border-bottom-color: #000;}
 
 
 /* ================================== */
@@ -839,6 +840,7 @@ ul.spip {list-style-type: square;}
    .bouton_action_post button.submit,
    .progression li,
    .coordonnees-numero,
+   .table-commande .taxes,
    .pagination,
    .formulaire .legend,
    h2.spip {font-family: "HelveticaNeueLTStdCnRegular","Helevetica Neue",Helvetica,sans-serif; font-weight: normal;}

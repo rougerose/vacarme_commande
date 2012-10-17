@@ -241,6 +241,7 @@ Pour toutes questions relatives à votre commande, n'hésitez pas à nous contac
    'total_ht'               => 'Total HT',
    'total_ttc'              => 'Total TTC',
    'tva'                    => 'TVA',
+   'tva_dont' => 'dont TVA',
 
    // V
    'valider_commande' => 'Valider votre commande &#x2192;',
