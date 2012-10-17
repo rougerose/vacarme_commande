@@ -39,9 +39,10 @@ if (!defined("_ECRIRE_INC_VERSION")) return;
    }
 
    function filtre_tva_applicable($tva=true,$type_client,$pays) {
-      include_spip('inc/vacarme_commande');
-      if (function_exists('tva_applicable'))
-         $tva = tva_applicable($type_client,$pays);
+   	$tva_applicable = charger_fonction('tva_applicable', 'inc');
+   	if ($tva_applicable) {
+   	   $tva = $tva_applicable($type_client,$pays);
+   	}
       return $tva;
    }
 
