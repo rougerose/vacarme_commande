@@ -6,7 +6,7 @@ function notifications_vacarme_commande_vendeur_destinataires_dist($id_commande,
    //return array(1,16);
    return array(1);
    /*
-      TODO rétablir envoi à adresse abonnement
+      TODO rétablir envoi à l'adresse abonnement
    */
 
 }
@@ -26,7 +26,8 @@ function notifications_vacarme_commande_vendeur_contenu_dist($id, $options, $des
       $tva = tva_applicable($row['identite']['type_client'],$row['pays']['pays']);
    }
    // les totaux de la commande
-   $total = sql_fetsel("montant_ht,montant","spip_commandes_transactions","id_commande=$id_commande AND statut='ok' AND finie='1'");
+   $total = sql_fetsel("montant_ht,montant","spip_commandes_transactions","id_commande=".$id_commande." AND statut='ok' AND finie='1'");
+   spip_log("commande ".$id_commande.' montants : '.$total['montant'],'vacarme_debug');
 
    $url_commande = generer_url_ecrire('commande_voir',"id_commande=$id_commande");
    $msg = _T('vacarme_commande:mail_paiement_vacarme', array(
