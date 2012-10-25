@@ -226,9 +226,10 @@
          $id_auteur = sql_getfetsel("id_auteur","spip_commandes","id_commande=".intval($id_commande));
          spip_log("id_auteur ".intval($id_auteur),"vacarme_debug");
          if (intval($id_auteur)) {
+            $id_panier = sql_getfetsel("id_panier","spip_paniers","id_auteur=".intval($id_auteur));
             $supprimer_panier = charger_fonction('supprimer_panier','action');
-            $supprimer_panier();
-            spip_log("Le panier de l'auteur ".$id_auteur." a été supprimé",'vacarme_debug');
+            $supprimer_panier(intval($id_panier));
+            spip_log("Le panier ".$id_panier." de l'auteur ".$id_auteur." a été supprimé",'vacarme_debug');
          }
 
       }
