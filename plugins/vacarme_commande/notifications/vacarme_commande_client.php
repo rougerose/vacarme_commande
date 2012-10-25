@@ -30,17 +30,13 @@ function notifications_vacarme_commande_client_contenu_dist($id, $options, $dest
    $row['pays'] = sql_fetsel("pays","spip_adresses_liens LEFT JOIN spip_adresses USING (id_adresse)",array("objet =".sql_quote('auteur'),"id_objet =".$row['id_auteur']));
 
    // le client paie la TVA ?
-   include_spip('inc/vacarme_commande');
-   if (function_exists('tva_applicable')) {
-      $tva = tva_applicable($row['identite']['type_client'],$row['pays']['pays']);
-   }
+   $tva_applicable = charger_fonction('tva_applicable','inc',true);
+   $tva_applicable($row['identite']['type_client'],$row['pays']['pays']);
 
-   // le détail de la commande
-   $details = sql_allfetsel("prix_unitaire_ht,taxe,quantite","spip_commandes_details","id_commande=$id_commande");
-   foreach($details as $d) {
-      $total += ($tva) ? ($d['prix_unitaire_ht']*$d['quantite'])*($d['taxe']+1) : ($d['prix_unitaire_ht']*$d['quantite']);
-   }
-   $total = round($total,2);
+   // les totaux de la commande
+   $total = sql_fetsel("montant_ht,montant","spip_commandes_transactions","id_commande=".$id_commande." AND statut='ok' AND finie='1'");
+   $total = ($tva_applicable)?$total['montant']:$total['montant_ht'];
+   #spip_log("commande ".$id_commande.' montants : '.$total['montant'],'vacarme_debug');
 
    // Elements nécessaires au message
 
