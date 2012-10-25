@@ -219,8 +219,16 @@
       #spip_log('flux bank_traiter_reglement '.var_export($donnees,true),'vacarme_debug');
 
       if ($flux['args']['id_transaction'] and $flux['args']['new'] == true and $flux['args']['notifier'] == true) {
-         $supprimer_panier_encours = charger_fonction('supprimer_panier_encours','action');
-         $supprimer_panier_encours;
+         // suppression du panier :
+         // id-auteur
+         $id_commande = $flux['args']['avant']['id_commande'];
+         $id_auteur = sql_getfetsel("id_auteur","spip_commandes","id_commande=".intval($id_commande));
+         if (intval($id_auteur)) {
+            $supprimer_panier = charger_fonction('supprimer_panier','action');
+            $supprimer_panier();
+            spip_log("Le panier de l'auteur ".$id_auteur." a été supprimé",'vacarme_debug');
+         }
+
       }
       return $flux;
 
