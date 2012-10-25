@@ -25,18 +25,15 @@ function notifications_vacarme_commande_vendeur_contenu_dist($id, $options, $des
    if (function_exists('tva_applicable')) {
       $tva = tva_applicable($row['identite']['type_client'],$row['pays']['pays']);
    }
-   // le détail de la commande
-   $details = sql_allfetsel("prix_unitaire_ht,taxe,quantite","spip_commandes_details","id_commande=$id_commande");
-   foreach($details as $d) {
-      $total += ($tva) ? ($d['prix_unitaire_ht']*$d['quantite'])*($d['taxe']+1) : ($d['prix_unitaire_ht']*$d['quantite']);
-   }
-   $total = round($total,2);
+   // les totaux de la commande
+   $total = sql_fetsel("montant_ht,montant","spip_commandes_transactions","id_commande=$id_commande AND statut='ok' AND finie='1'");
+
    $url_commande = generer_url_ecrire('commande_voir',"id_commande=$id_commande");
    $msg = _T('vacarme_commande:mail_paiement_vacarme', array(
       'numero_commande' => $row['reference'],
       'prenom' => $row['identite']['prenom'],
       'nom' => $row['identite']['nom'],
-      'total' => $total.' euros',
+      'total' => ($tva) ? $total['montant']:$total['montant_ht'].' euros',
       'statut' => $row['statut'],
       'paiement' => $row['paiement'],
       'url_commande' => $url_commande
