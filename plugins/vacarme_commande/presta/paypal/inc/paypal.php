@@ -123,7 +123,7 @@ function bank_paypal_recoit_notification(){
 
    // mise à jour de la commande
    $id_commande = sql_getfetsel("id_commande","spip_commandes_transactions","id_transaction=".intval($id_transaction));
-   sql_updateq("spip_commandes",array("paiement" => "paypal", "statut" => "paye"),"id_commande=".intval($id_commande));
+   sql_updateq("spip_commandes",array("paiement" => "paypal", "statut" => "paye","date_paiement" => 'NOW()'),"id_commande=".intval($id_commande));
 
 	$regler_transaction = charger_fonction('regler_transaction','bank');
 	$regler_transaction($id_transaction,"",$row);
