@@ -222,7 +222,9 @@
          // suppression du panier :
          // id-auteur
          $id_commande = $flux['args']['avant']['id_commande'];
+         spip_log("id_commande ".$id_commande,"vacarme_debug");
          $id_auteur = sql_getfetsel("id_auteur","spip_commandes","id_commande=".intval($id_commande));
+         spip_log("id_auteur ".intval($id_auteur),"vacarme_debug");
          if (intval($id_auteur)) {
             $supprimer_panier = charger_fonction('supprimer_panier','action');
             $supprimer_panier();
