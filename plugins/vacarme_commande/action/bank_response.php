@@ -46,19 +46,24 @@ function action_bank_response($cancel=null,$auto=null){
 		 AND $id_transaction=reset($id)
 		 AND $hash=end($id)) {
 			$id_transaction = sql_getfetsel ("id_transaction","spip_commandes_transactions","id_transaction=".intval($id_transaction)." AND transaction_hash=".sql_quote($hash));
-			if ($id_transaction)
+			if ($id_transaction) {
 				$fallback = sql_updateq("spip_commandes_transactions",
 						array('message'=>'Transaction annul&eacute;e','statut'=>'echec','mode'=>$p),
 						'id_transaction='.intval($id_transaction)." AND statut='commande'"
 				);
+			}
 		}
 
 		if (!$auto) {
          // ajout -> la transaction est renseignée comme annulée
          if(!$fallback) {
+            spip_log("bank_response condition !auto + condition !fallback","vacarme_debug");
             sql_updateq("spip_commandes_transactions",
                array('message'=>'Transaction annul&eacute;e','statut'=>'echec','mode'=>$p),
                'id_transaction='.intval($id_transaction)." AND statut='commande'");
+               /*
+                  TODO pourquoi cet ajout ?
+               */
          }
 		   redirige_apres_retour_transaction($p,'acte',$cancel?false:$result,$id_transaction);
 		}
@@ -109,12 +114,18 @@ function redirige_apres_retour_transaction($mode,$acte_ou_abo,$succes,$id_transa
 				$redirect = constant($c);
 			else
 				$redirect = generer_url_public('bank_retour_ok');
+         /*
+            TODO refaire la page de résultat
+         */
 		}
 		else {
 			if (defined($c))
 				$redirect = constant($c);
 			else
 				$redirect = generer_url_public('bank_retour_echec');
+         /*
+            TODO refaire la page de résultat
+         */
 		}
 
 

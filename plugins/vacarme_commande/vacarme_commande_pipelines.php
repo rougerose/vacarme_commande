@@ -93,6 +93,7 @@
    // ===========================
    // = pipeline post_insertion =
    // ===========================
+
    // flux depuis creer_commande_encours : on ajoute l'id de commande dans sa référence
    function vacarme_commande_post_insertion ($flux) {
       if ($flux['args']['table'] == 'spip_commandes' and $flux['args']['id_objet']) {
@@ -103,18 +104,42 @@
          // on renvoie dans le flux la nouvelle référence
          $flux['data']['reference'] = $reference;
 
+         // le prix et la TVA enregistrée précédemment lors de la création de commande (par le pipeline panier2commande_post_insertion) sont faux (prix TTC de la base, tva à zéro). Donc correction.
+         // On ne se préoccupe pas si le client paie ou pas la TVA. On enregistre le prix ht.
+         include_spip('inc/config');
+      	$tx_tva = lire_config('produits/taxe', 0);
 
-         // récupération des prix de chaque élément
-         if ($montants = sql_allfetsel('prix_unitaire_ht, taxe', 'spip_commandes_details', 'id_commande='.$id_commande)) {
-             foreach ($montants as $m) {
-                $total_ht += round($m['prix_unitaire_ht'],2);
-                $total_ttc += ($m['prix_unitaire_ht']*($m['taxe']+1));
-             }
-             $total_ht = round($total_ht,2);
-             $total_ttc = round($total_ttc,2);
-             #var_dump($total_ht,$total_ttc); die();
+         $cde = sql_allfetsel('id_commandes_detail,prix_unitaire_ht,taxe','spip_commandes_details','id_commande='.$id_commande.' AND prix_unitaire_ht != 0');
+         if ($cde) {
+            foreach($cde as $emplette) {
+               $prix_ht = $emplette['prix_unitaire_ht']/($tx_tva + 1);
+               sql_updateq('spip_commandes_details',array('prix_unitaire_ht' => $prix_ht, 'taxe' => $tx_tva),'id_commandes_detail='.$emplette['id_commandes_detail']);
+            }
          }
+         // le client doit-il payer la tva ? Cela dépend de son pays de résidence et s'il est particulier ou organisation
+         $tva = true; // a priori oui...
 
+         $id_auteur = $flux['data']['id_auteur'];
+         $row = sql_fetsel('*','spip_commandes','id_commande='.intval($id_commande));
+         if($id_auteur AND $row['id_auteur'] == $id_auteur) {
+            // faire autant de selections pour connaitre le pays et le type du client : problème...
+            $contact = sql_fetsel('type_client,id_contact','spip_contacts','id_auteur='.$id_auteur);
+            $id_adresse = sql_fetsel('id_adresse','spip_adresses_liens','id_objet='.$id_auteur.' AND type='.sql_quote('principale').' AND objet='.sql_quote('auteur'));
+            $pays = sql_fetsel('pays','spip_adresses','id_adresse='.$id_adresse['id_adresse']);
+            $tva_applicable = charger_fonction('tva_applicable', 'inc');
+            $tva = $tva_applicable($contact['type_client'],$pays['pays']);
+         }
+         // récupération des prix de chaque élément qui compose la commande
+         if ($montants = sql_allfetsel('prix_unitaire_ht, taxe, quantite', 'spip_commandes_details', 'id_commande='.$id_commande)) {
+             foreach ($montants as $m) {
+                $total_ht += $m['prix_unitaire_ht']*$m['quantite'];
+                if ($tva) $total_ttc += round(($m['prix_unitaire_ht']*($m['taxe']+1)),2)*$m['quantite'];
+             }
+             #var_dump($total_ht,$total_ttc)
+             $total_ht = round($total_ht,2);
+             if (!$tva) $total_ttc = $total_ht;
+         }
+         #var_dump($total_ht,$total_ttc); die();
          // ajout des infos de transactions dans la table commandes_transactions
          $inserer_transaction = charger_fonction('inserer_transaction','inc/');
          $id_transaction = $inserer_transaction($id_commande,$reference,$total_ht,$total_ttc);

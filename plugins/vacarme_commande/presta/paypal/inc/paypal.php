@@ -85,11 +85,22 @@ function bank_paypal_recoit_notification(){
    /*
       TODO problème d'arrondis sur les montants HT + TVA. Le total peut varier d'1 centime en plus ou en moins. Dans l'immédiat, on enlève cette vérification. A terme, il faudrait plutôt prendre comme base des prix TTC (au lieu des prix HT) et faire apparaitre les prix HT en différence de la TVA.
    */
-	/*if (!isset($valeurs['mc_gross']) OR (($montant_regle=$valeurs['mc_gross'])!=$row['montant'])){
+
+   if (!isset($valeurs['mc_gross'])){
 		spip_log("Transaction $id_transaction:montant incorrect : POST :".var_export($valeurs,true),'paypal_invalid_IPN');
 		$message="Les informations concernant votre transaction $id_transaction sont erron&eacute;es";
 		return paypal_echec_transaction($id_transaction,$message); // erreur sur la transaction
-	}*/
+	}
+
+   // le montant existe, on va tolérer une petite marge d'erreur, en raison des arrondis sur les calculs de TVA
+    $montant_attendu = $row['montant'];
+    $montant_regle = $valeurs['mc_gross'];
+    $ecart_pourcentage = abs(($montant_attendu - $montant_regle) * 100 / $montant_attendu);
+    if ($ecart_pourcentage > 0.05 ) {
+       spip_log("Transaction $id_transaction : montant incorrect -- différence importante -- : POST :".var_export($valeurs,true),'paypal_invalid_IPN');
+       $message="Les informations concernant votre transaction $id_transaction sont erron&eacute;es";
+       return paypal_echec_transaction($id_transaction,$message);
+    }
 
 	// verifier que la notification vient bien de paypal !
 	if (!bank_paypal_verifie_notification($valeurs)){
@@ -109,6 +120,10 @@ function bank_paypal_recoit_notification(){
 		),
 		"id_transaction=".intval($id_transaction));
 	spip_log("simple_reponse : id_transaction $id_transaction, reglee",'paypal');
+
+   // mise à jour de la commande
+   $id_commande = sql_getfetsel("id_commande","spip_commandes_transactions","id_transaction=".intval($id_transaction));
+   sql_updateq("spip_commandes",array("paiement" => "paypal", "statut" => "paye"),"id_commande=".intval($id_commande));
 
 	$regler_transaction = charger_fonction('regler_transaction','bank');
 	$regler_transaction($id_transaction,"",$row);
@@ -143,8 +158,9 @@ function bank_paypal_verifie_notification($args){
 	// attention, c'est une demande en ssl, il faut avoir un php qui le supporte
 	//$bank_recuperer_post_https = charger_fonction("bank_recuperer_post_https","inc");
 	//list($resultat,$erreur,$erreur_msg) = $bank_recuperer_post_https(_PAYPAL_URL_SERVICES,$args);
+
+   // utilisation d'une méthode de vérification la précédente ne fonctionne pas systématiquement
    $ipnlistener_recuperer_post_https = charger_fonction("ipnlistener_recuperer_post_https","inc");
-   #if (!$ipnlistener_recuperer_post_https) spip_log("pas de fonction ipnlistener_recuperer_post_https","paypal");
    list($resultat,$erreur,$erreur_msg) = $ipnlistener_recuperer_post_https($args);
    spip_log("fonction ipnlistener, resultat ".$resultat." erreur ".$erreur." message d'erreur ".$erreur_msg,"paypal");
 

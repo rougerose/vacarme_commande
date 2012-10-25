@@ -58,6 +58,7 @@
    <utilise id="snippets" version="[0.2.0;]" />
    <utilise id="contacts" version="[1.13.5;]" />
    <utiliser id="bank" version="[2.1.1;]" />
+   <utiliser id="commandes_paniers" version="[0.1.2;]" />
    <necessite id="SPIP" version="[2.1.10;2.1.99]" />
    <necessite id="Z" version="[1.7.19;]" />
    <necessite id="spip_bonux" version="[2.2.17;]" />
