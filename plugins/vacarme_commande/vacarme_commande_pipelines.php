@@ -214,13 +214,9 @@
    //    - envoyer les notifications
 
    function vacarme_commande_bank_traiter_reglement($flux) {
-      #$donnees = array();
-      #$donnees = $flux;
-      #spip_log('flux bank_traiter_reglement '.var_export($donnees,true),'vacarme_debug');
-
       if ($flux['args']['id_transaction'] and $flux['args']['new'] == true and $flux['args']['notifier'] == true) {
          // suppression du panier :
-         // id-auteur
+         // récupération de id_auteur et id_panier
          $id_commande = $flux['args']['avant']['id_commande'];
          spip_log("id_commande ".$id_commande,"vacarme_debug");
          $id_auteur = sql_getfetsel("id_auteur","spip_commandes","id_commande=".intval($id_commande));
@@ -231,6 +227,16 @@
             $supprimer_panier(intval($id_panier));
             spip_log("Le panier ".$id_panier." de l'auteur ".$id_auteur." a été supprimé",'vacarme_debug');
          }
+
+         // on envoie les notifications
+         $notifications = charger_fonction('notifications', 'inc', true);
+         // on reprend sur le modèle de la notification dans instituer_commande, c'est-à-dire uniquement l'id du webmestre dans $options,
+         // mais on pourrait, du coup, en ajouter d'autres puisqu'on fabrique notre propre notification. A voir plus tard.
+         $options = array();
+         $options['expediteur'] = 1; // webmestre
+         // on envoie
+         $notifications('vacarme_commande_vendeur', $id_commande, $options);
+         $notifications('vacarme_commande_client', $id_commande, $options);
 
       }
       return $flux;

@@ -3,7 +3,11 @@ if (!defined("_ECRIRE_INC_VERSION")) return;
 
 function notifications_vacarme_commande_vendeur_destinataires_dist($id_commande, $options) {
    // les notifications vendeurs sont expédiées à auteur 1 (webmaster) + auteur 16 (abonnement)
-   return array(1,16);
+   //return array(1,16);
+   return array(1);
+   /*
+      TODO rétablir envoi à adresse abonnement
+   */
 
 }
 
