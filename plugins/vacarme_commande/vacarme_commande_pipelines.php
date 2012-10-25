@@ -213,10 +213,17 @@
    //    - supprimer le panier
    //    - envoyer les notifications
 
-   function bank_traiter_reglement ($flux) {
-      $donnees = array();
-      $donnees = $flux;
-      spip_log('flux bank_traiter_reglement '.var_export($donnees,true),'vacarme_debug');
+   function vacarme_commande_bank_traiter_reglement($flux) {
+      #$donnees = array();
+      #$donnees = $flux;
+      #spip_log('flux bank_traiter_reglement '.var_export($donnees,true),'vacarme_debug');
+
+      if ($flux['args']['id_transaction'] and $flux['args']['new'] == true and $flux['args']['notifier'] == true) {
+         $supprimer_panier_encours = charger_fonction('supprimer_panier_encours','action');
+         $supprimer_panier_encours;
+      }
+      return $flux;
+
    }
 
 
