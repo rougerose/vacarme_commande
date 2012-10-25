@@ -205,9 +205,19 @@
       return $flux;
    }
 
-   // ===========================
-   // = pipeline affiche_milieu =
-   // ===========================
+   // ===================================
+   // = pipeline bank_traiter_reglement =
+   // ===================================
+
+   // pipeline pour :
+   //    - supprimer le panier
+   //    - envoyer les notifications
+
+   function bank_traiter_reglement ($flux) {
+      $donnees = array();
+      $donnees = $flux;
+      spip_log('flux bank_traiter_reglement '.var_export($donnees,true),'vacarme_debug');
+   }
 
 
 ?>

@@ -48,6 +48,10 @@
       <nom>traitement_paypal</nom>
       <inclure>vacarme_commande_pipelines.php</inclure>
    </pipeline>
+   <pipeline>
+      <nom>bank_traiter_reglement</nom>
+      <inclure>vacarme_commande_pipelines.php</inclure>
+   </pipeline>
    <fonctions>vacarme_commande_fonctions.php</fonctions>
    <bouton id='vacarme21' parent='bando_edition'>
       <titre>Vacarme</titre>
