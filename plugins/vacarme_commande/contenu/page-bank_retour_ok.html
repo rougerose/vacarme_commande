@@ -1,0 +1,26 @@
+<BOUCLE_message(COMMANDES_TRANSACTIONS){id_transaction}{transaction_hash}>
+[(#SET{message,#MESSAGE})][ (#MODE|=={paypal}|oui) #SET{p,p} #SET{r,1} ]
+</BOUCLE_message>
+
+<INCLURE{fond=inclure/visiteur,env}>
+#INCLURE{fond=inclure/progression,composition=confirmation,reglement=#GET{r}}
+<h1><:vacarme_commande:commande_confirmation:></h1>
+[(#REM)  p -> paiement ; c -> chèque ; v -> virement ; p -> paypal
+         r -> règlement ; 0 -> echec ; 1 -> ok ; 2 -> en attente (reglement)
+]
+
+[(#GET{p}|match{^(c|v|p)$}|oui)
+   [(#GET{r}|=={0}|oui)
+      <p class="message erreur medium">
+         <span class="information"><:vacarme_commande:message_erreur_paiement:></span>
+      </p>
+   ][(#GET{r}|=={1}|oui)
+      <p class="message succes medium">
+         <span class="information"><:vacarme_commande:message_ok_paypal:></span>
+      </p>
+   ][(#GET{r}|=={2}|oui)
+      <p class="message succes medium">
+         <span class="information"><:vacarme_commande:message_ok_formulaire_paiements_alter:></span>
+      </p>
+   ]
+]

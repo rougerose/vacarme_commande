@@ -8,7 +8,7 @@
    <p class="information">
       <:vacarme_commande:commande_annulation_info:>
       <BOUCLE_message(COMMANDES_TRANSACTIONS){id_transaction}{transaction_hash}>
-      [(#MESSAGE|propre|sinon{<:vacarme_commande:commmande_erreur_inconnue:>}).] [(#SET{id_commande,#ID_COMMANDE})]
+      [(#MESSAGE|sinon{<:vacarme_commande:commmande_erreur_inconnue:>}).] [(#SET{id_commande,#ID_COMMANDE})]
       </BOUCLE_message>
    </p>
    <BOUCLE_commande(COMMANDES){id_commande=#GET{id_commande}}>
