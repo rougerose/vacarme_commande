@@ -94,15 +94,15 @@
    // = pipeline post_insertion =
    // ===========================
    function vacarme_commande_post_insertion ($flux) {
-      if ($flux['args']['table'] == 'spip_commandes' and $flux['args']['id_objet']) {
-         $id_commande = intval($flux['args']['id_objet']);
-
-         // flux depuis creer_commande_encours : on ajoute l'id de commande dans sa référence
-         $reference = $flux['data']['reference']; // de la forme aaaammjj-id_auteur
-         $reference = $reference."-".$id_commande; // devient aaaammjj-id_auteur-id_commande
-         sql_updateq("spip_commandes", array('reference' => $reference), "id_commande=$id_commande");
+      if ($flux['args']['table'] == 'spip_commandes' and $flux['args']['action'] == 'passer_commande') {
+         $id_commande = intval($flux['args']['id_commande']);
+         // référence à corriger : de la forme aaaammjj-id_auteur
+         $reference = sql_getfetsel('reference','spip_commandes','id_commande='.$id_commande);
+         // elle devient aaaammjj-id_auteur-id_commande
+         $reference_nouvelle = $reference."-".$id_commande;
+         sql_updateq("spip_commandes", array('reference' => $reference_nouvelle), "id_commande=$id_commande");
          // on renvoie dans le flux la nouvelle référence
-         $flux['data']['reference'] = $reference;
+         #$flux['data']['reference'] = $reference;
 
          // Récupération de l'ensemble du détails de la commande
          $cde = sql_allfetsel(
@@ -140,13 +140,20 @@
 
                // dans tous les cas, on met à jour la table commandes_details avec le vrai prix HT et le taux de TVA qui a été enregistré précédemment à zéro.
                sql_updateq('spip_commandes_details',array('prix_unitaire_ht' => $prix_ht, 'taxe' => $tx_tva),'id_commandes_detail='.$emplette['id_commandes_detail'].' AND id_objet='.$emplette['id_objet']);
+
+               if ($emplette['objet'] == 'abonnement') {
+                  spip_log('numero '.$emplette['numero'],"vacarme_debug");
+               }
             }
             $total_ht = round($total_ht,2);
             if (!$tva) $total_ttc = $total_ht;
          }
 
-         $contact_abonnement = charger_fonction('abonnement_post_insertion', 'abonnement_pipelines');
-         if (!$contact_abonnement) spip_log("abonnement_post_insertion non disponible","vacarme_debug");
+         include_spip('abonnement_pipelines');
+         $contact_abonnement = abonnement_post_insertion($flux);
+
+         // le numero de départ d'abonnement doit être reporté + ajout du numéro de fin
+
 
          // envoi dans la table transaction. Le montant TTC contient la tva à condition que le client doive la payer.
          $inserer_transaction = charger_fonction('inserer_transaction','inc');

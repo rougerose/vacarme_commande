@@ -63,6 +63,18 @@ function action_passer_commande_dist($arg=null) {
    'id_objet' => $id_commande,
    'type' => 'livraison' ) );
 
+   // envoi aux plugins
+	pipeline('post_insertion',
+		array(
+			'args' => array(
+				'table' => 'spip_commandes',
+				'id_commande' => $id_commande,
+            'action' => 'passer_commande'
+			),
+			'data' => ''
+		)
+	);
+
 }
 
 ?>
