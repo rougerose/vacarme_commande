@@ -28,6 +28,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
    'commande_annulation_confirmation'    => "Votre commande a bien été annulée.",
    'commande_annulation_explication'     => "Pour la <strong>modifier</strong>, veuillez cliquer sur le bouton  &laquo;&nbsp;Retour à votre panier&nbsp;&raquo;.<br />Pour la <strong>supprimer</strong>, veuillez cliquer sur &laquo;&nbsp;Supprimer votre commande&nbsp;&raquo;",
    'commande_annulation_info'            => "Le paiement de votre commande n'a pas été effectué pour le motif suivant :",
+   'commande_erreur_contact_commande'    => "Si vous souhaitez <a href='@contact@'>nous contacter</a> pour nous signaler une éventuelle anomalie,<br /> n'hésitez pas à le faire en précisant <strong>votre nom</strong> et votre numéro de commande : <strong>@commande@</strong>",
+   'commmande_erreur_inconnue'           => "Erreur non identifiée",
    'commande_confirmation'               => 'Confirmation de votre commande',
    'compte_abonnement'                   => 'Votre abonnement',
    'compte_adresse_titre'                => 'Modifier vos coordonnées postales',
