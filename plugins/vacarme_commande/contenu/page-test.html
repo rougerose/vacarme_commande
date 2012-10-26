@@ -1,9 +1,7 @@
-#SET{tva,''}
-<BOUCLE_auteur(CONTACTS){id_auteur=3}>
-#NOM
-<BOUCLE_pays(ADRESSES adresses_liens){id_auteur}>#SET{pays,#PAYS}</BOUCLE_pays>
-#GET{pays}
-[(#GET{tva}|tva_applicable{#TYPE_CLIENT,}|oui)blabla]
+<?php
+
+var_dump($flux);
 
 
-</BOUCLE_auteur>
+
+?>

@@ -26,13 +26,14 @@ function notifications_vacarme_commande_vendeur_contenu_dist($id, $options, $des
    // les totaux de la commande
    $total = sql_fetsel("montant_ht,montant","spip_commandes_transactions","id_commande=".$id_commande." AND statut='ok' AND finie='1'");
    #spip_log("commande ".$id_commande.' montants : '.$total['montant'],'vacarme_debug');
+   $total = ($tva_applicable)?$total['montant']:$total['montant_ht'];
 
    $url_commande = generer_url_ecrire('commande_voir',"id_commande=$id_commande");
    $msg = _T('vacarme_commande:mail_paiement_vacarme', array(
       'numero_commande' => $row['reference'],
       'prenom' => $row['identite']['prenom'],
       'nom' => $row['identite']['nom'],
-      'total' => ($tva_applicable) ? $total['montant']:$total['montant_ht'].' euros',
+      'total' => $total.' euros',
       'statut' => $row['statut'],
       'paiement' => $row['paiement'],
       'url_commande' => $url_commande

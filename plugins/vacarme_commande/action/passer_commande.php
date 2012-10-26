@@ -37,6 +37,7 @@ function action_passer_commande_dist($arg=null) {
       }
    }
 
+
    // On cherche l'adresse principale du visiteur
    $id_adresse = sql_getfetsel( 'id_adresse',  'spip_adresses_liens',
    array( 'objet = '.sql_quote('auteur'),
