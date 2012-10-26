@@ -3,15 +3,18 @@
 
 <INCLURE{fond=inclure/progression,composition=#ENV{composition},confirmation=#ENV{confirmation}}>
 
-[(#SESSION{id_commande}|=={#ENV{commande}}|oui)
 <h1><:vacarme_commande:commande_annulation:></h1>
 <div class="message warning large multi">
    <p class="information"><:vacarme_commande:commande_annulation_info:></p>
-   <p class="explication"><:vacarme_commande:commande_annulation_explication:></p>
+   <p class="explication">
+      <BOUCLE_message(TRANSACTIONS){id_transaction}{transaction_hash}>[
+         (#MESSAGE|propre)
+      ]</BOUCLE_message>
+   </p>
    <p class="action poursuivre-achats retour">
       <a href="#URL_PAGE{panier}" class="btn large item1"><:vacarme_commande:retour_panier:></a>
    </p>
-   [(#AUTORISER{supprimer,commande,#ENV{commande},#SESSION{id_auteur}})
+   [(#AUTORISER{supprimer,commande,#SESSION{id_commande},#SESSION{id_auteur}})
    <p class="action">
       [(#BOUTON_ACTION{
          <:vacarme_commande:supprimer_votre_commande:>,
@@ -19,7 +22,7 @@
          large supprimer,<:commandes:confirmer_supprimer_commande:>})]
    </p>]
 </div><!-- .message -->
-][(#SESSION{id_commande}|=={#ENV{commande}}|non)
+[(#SESSION{id_commande}|non)
    [(#ENV{confirmation}|non)
    <h1><:vacarme_commande:commande_annulation:></h1>
    <div class="message warning large multi">
