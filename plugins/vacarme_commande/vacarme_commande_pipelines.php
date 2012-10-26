@@ -95,7 +95,7 @@
    // ===========================
    function vacarme_commande_post_insertion ($flux) {
       if ($flux['args']['table'] == 'spip_commandes' and $flux['args']['action'] == 'passer_commande') {
-         $id_commande = intval($flux['args']['id_commande']);
+         $id_commande = intval($flux['args']['id_objet']);
          // référence à corriger : de la forme aaaammjj-id_auteur
          $reference = sql_getfetsel('reference','spip_commandes','id_commande='.$id_commande);
          // elle devient aaaammjj-id_auteur-id_commande

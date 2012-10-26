@@ -68,10 +68,10 @@ function action_passer_commande_dist($arg=null) {
 		array(
 			'args' => array(
 				'table' => 'spip_commandes',
-				'id_commande' => $id_commande,
+				'id_objet' => $id_commande,
             'action' => 'passer_commande'
 			),
-			'data' => ''
+			'data' => array('id_auteur' => $id_auteur)
 		)
 	);
 
