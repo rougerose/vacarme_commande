@@ -74,6 +74,16 @@ function bank_regler_transaction_dist($id_transaction,$message="",$row_prec=null
 	);
 
 	sql_updateq("spip_commandes_transactions",array('message'=>$message,'finie'=>1),"id_transaction=".intval($id_transaction));
+   // mettre à jour le statut_abonnement de la table contacts_abonnements, si la commande comporte un ou des abonnements
+   $id_commande = $row_prec['id_commande'];
+   $id_commandes_detail = sql_allfetsel('id_commandes_detail','spip_commandes_details','id_commande='.$id_commande.' and objet="abonnement"');
+   if ($id_commandes_detail) {
+      foreach ($id_commandes_detail as $k) {
+         foreach($k as $id) {
+            sql_updateq("spip_contacts_abonnements",array('statut_abonnement' => 'paye'),'id_commandes_detail='.$id);
+         }
+      }
+   }
 
 	// notifier aux admins avec un ticket caisse
 	if ($notifier) {

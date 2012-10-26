@@ -101,8 +101,6 @@
          // elle devient aaaammjj-id_auteur-id_commande
          $reference_nouvelle = $reference."-".$id_commande;
          sql_updateq("spip_commandes", array('reference' => $reference_nouvelle), "id_commande=$id_commande");
-         // on renvoie dans le flux la nouvelle référence
-         #$flux['data']['reference'] = $reference;
 
          // Récupération de l'ensemble du détails de la commande
          $cde = sql_allfetsel(
@@ -130,6 +128,9 @@
             $tva_applicable = charger_fonction('tva_applicable', 'inc');
             $tva = $tva_applicable($row['type_client'],$row['pays']);
          }
+
+         $details_abonnement = array();
+
          if ($cde) {
             foreach($cde as $emplette) {
                // calcul du prix HT réel : le prix de l'objet est enregistré en TTC, donc jusqu'ici, à la création de la commande, il est encore en TTC
@@ -142,19 +143,33 @@
                sql_updateq('spip_commandes_details',array('prix_unitaire_ht' => $prix_ht, 'taxe' => $tx_tva),'id_commandes_detail='.$emplette['id_commandes_detail'].' AND id_objet='.$emplette['id_objet']);
 
                if ($emplette['objet'] == 'abonnement') {
-                  spip_log('numero '.$emplette['numero'],"vacarme_debug");
+                  $numero_debut = $emplette['numero'];
+                  // calcul du numéro de fin
+                  $duree = sql_getfetsel('duree','spip_abonnements','id_abonnement = '.$emplette['id_objet']);
+                  if ($duree == 12 or $duree == 24) {
+                     $numero_fin = (($duree)/3) + (($numero_debut)-1);
+                  } else {
+                     $numero_fin = 0;
+                     spip_log('ERREUR : durée abonnement non conforme, impossible de calculer le numéro de fin id_commandes_detail='.$emplette['id_commandes_detail'],"vacarme_debug");
+                  }
+                  $id = $emplette['id_commandes_detail'];
+                  $details_abonnement[$id] = "$numero_debut|$numero_fin";
                }
             }
             $total_ht = round($total_ht,2);
             if (!$tva) $total_ttc = $total_ht;
          }
+         // création du contact_abonnement
+         if (!empty($details_abonnement)) {
+            include_spip('abonnement_pipelines');
+            $contact_abonnement = abonnement_post_insertion($flux);
 
-         include_spip('abonnement_pipelines');
-         $contact_abonnement = abonnement_post_insertion($flux);
-
-         // le numero de départ d'abonnement doit être reporté + ajout du numéro de fin
-
-
+            // le numero de départ d'abonnement + le numéro de fin, table contacts_abonnements
+            foreach ($details_abonnement as $id => $numero) {
+               list($nd,$nf) = explode("|",$numero);
+               sql_updateq('spip_contacts_abonnements',array('numero_debut' => $nd,'numero_fin' => $nf),'id_commandes_detail='.$id);
+            }
+         }
          // envoi dans la table transaction. Le montant TTC contient la tva à condition que le client doive la payer.
          $inserer_transaction = charger_fonction('inserer_transaction','inc');
          $id_transaction = $inserer_transaction($id_commande,$reference,$total_ht,$total_ttc);
