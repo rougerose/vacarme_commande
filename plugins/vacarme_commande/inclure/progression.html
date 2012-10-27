@@ -7,7 +7,7 @@
 ]
 [(#ENV{composition}|=={annulation}|oui)#SET{etape,3}]
 [(#ENV{composition}|=={annulation}|et{#ENV{confirmation}|=={oui}}|oui)#SET{etape,4} #SET{annulation,' '}]
-#ENV{reglement}
+
 <ol class="nav progression">
    <li class="[(#GET{etape}|=={1}|oui)on][(#GET{etape}|>{1}|oui)done]"><:vacarme_commande:votre_panier:></li>
    <li class="[(#GET{etape}|=={2}|oui)on][ (#GET{etape}|>{2}|oui)done]"><:vacarme_commande:votre_commande:></li>

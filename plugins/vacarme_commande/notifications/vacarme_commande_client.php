@@ -34,7 +34,7 @@ function notifications_vacarme_commande_client_contenu_dist($id, $options, $dest
    $tva_applicable($row['identite']['type_client'],$row['pays']['pays']);
 
    // les totaux de la commande
-   $total = sql_fetsel("montant_ht,montant","spip_commandes_transactions","id_commande=".$id_commande." AND statut='ok' AND finie='1'");
+   $total = sql_fetsel("montant_ht,montant","spip_commandes_transactions","id_commande=".$id_commande);
    $total = ($tva_applicable)?$total['montant']:$total['montant_ht'];
    #spip_log("commande ".$id_commande.' montants : '.$total['montant'],'vacarme_debug');
 

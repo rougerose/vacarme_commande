@@ -1,6 +1,8 @@
-<BOUCLE_message(COMMANDES_TRANSACTIONS){id_transaction}{transaction_hash}>
-[(#SET{message,#MESSAGE})][ (#MODE|=={paypal}|oui) #SET{p,p} #SET{r,1} ]
-</BOUCLE_message>
+<BOUCLE_message(COMMANDES_TRANSACTIONS){id_transaction}{transaction_hash}>[
+(#SET{message,#MESSAGE})][
+(#MODE|=={paypal}|oui) #SET{p,p} #SET{r,1}][
+(#MODE|=={cheque}|oui|ou{#MODE|=={virement}|oui})#SET{p,c} #SET{r,2}
+]</BOUCLE_message>
 
 <INCLURE{fond=inclure/visiteur,env}>
 #INCLURE{fond=inclure/progression,composition=confirmation,reglement=#GET{r}}

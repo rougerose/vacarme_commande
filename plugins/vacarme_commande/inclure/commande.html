@@ -121,12 +121,12 @@
 
    <div id="cheque" class="option cf">
       <p class="infos"><:vacarme_commande:paiement_cheque_message_explication:></p>
-
+      #PAYER_ACTE{cheque,#ID_TRANSACTION,#TRANSACTION_HASH,''}
    </div><!-- #cheque -->
 
    <div id="virement" class="option cf">
       <p class="infos"><:vacarme_commande:paiement_virement_message_explication:></p>
-
+      #PAYER_ACTE{virement,#ID_TRANSACTION,#TRANSACTION_HASH,''}
    </div><!-- #virement -->
 </div><!-- .tabs -->
 </BOUCLE_transaction>
