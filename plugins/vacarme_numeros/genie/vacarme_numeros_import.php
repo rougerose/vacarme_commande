@@ -37,7 +37,7 @@
                   $titre = $numero['numero'];
                   $saison = $numero['saison'];
                   $annee = $numero['annee'];
-                  if ($numero['prix']) { $prix = round(($numero['prix']/(1 + $tva)),4); }
+                  $prix = $numero['prix']; // on garde le prix TTC
                   $url = $numero['url'];
                   $logo = $numero['logo'];
                   $sommaire = $numero['sommaire'];
