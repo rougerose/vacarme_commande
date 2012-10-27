@@ -57,7 +57,7 @@ function action_bank_response($cancel=null,$auto=null){
 		if (!$auto) {
          // ajout -> la transaction est renseignée comme annulée
          if(!$fallback) {
-            spip_log("bank_response condition !auto + condition !fallback","vacarme_debug");
+            #spip_log("bank_response condition !auto + condition !fallback","vacarme_debug");
             sql_updateq("spip_commandes_transactions",
                array('message'=>'Transaction annul&eacute;e','statut'=>'echec','mode'=>$p),
                'id_transaction='.intval($id_transaction)." AND statut='commande'");
