@@ -113,9 +113,7 @@
          // le client doit-il payer la tva ? Cela dépend de son pays de résidence et s'il est particulier ou organisation
          $tva = true; // a priori oui...
          $id_auteur = $flux['data']['id_auteur'];
-         $row = sql_getfetsel(
-            "id_auteur","spip_commandes","id_commande=$id_commande"
-         );
+         $row['id_auteur'] = sql_getfetsel("id_auteur","spip_commandes","id_commande=".$id_commande);
          $row['type_client'] = sql_getfetsel(
             "type_client","spip_contacts","id_auteur =".$row['id_auteur']
          );
@@ -136,6 +134,7 @@
                // calcul du prix HT réel : le prix de l'objet est enregistré en TTC, donc jusqu'ici, à la création de la commande, il est encore en TTC
                $prix_ht = $emplette['prix_unitaire_ht'] / ($tx_tva + 1);
                $total_ht += $prix_ht * $emplette['quantite'];
+               spip_log("la tva est-elle applicable pour le client ".$id_auteur." ?".$tva,'vacarme_debug');
                // si tva
                if ($tva) $total_ttc += $emplette['prix_unitaire_ht'] * $emplette['quantite'];
 
