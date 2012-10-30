@@ -14,7 +14,7 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
 /* Paypal Simple ----------------------------------------------------------- */
 // parametres pour paiement standard paypal
 if (!defined('_PAYPAL_BUSINESS_USERNAME'))
-	define('_PAYPAL_BUSINESS_USERNAME', '539GDBZ3N63XU');
+	define('_PAYPAL_BUSINESS_USERNAME', 'contact@vacarme.org');
 if (!defined('_PAYPAL_URL_SERVICES'))
 	define('_PAYPAL_URL_SERVICES', 'https://www.paypal.com/cgi-bin/webscr');
 
