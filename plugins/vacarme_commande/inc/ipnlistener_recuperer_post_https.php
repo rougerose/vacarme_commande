@@ -32,7 +32,7 @@
       account: https://developer.paypal.com
       When you are ready to go live change use_sandbox to false.
       */
-      $listener->use_sandbox = true;
+      $listener->use_sandbox = false;
 
       try {
          $listener->requirePostMethod();
