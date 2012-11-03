@@ -40,13 +40,12 @@
                |parametre_url{objet,#OBJET}
                |parametre_url{id_objet,#ID_OBJET}
                |parametre_url{retour,[(#ENV{retour,#SELF})]})],ajax})]
-               <!--
                [(#BOUTON_ACTION{
                   [(#CHEMIN{images/supprimer-16.png}|balise_img{<:abo:supprimer_offre:>})],
                   [(#URL_ACTION_AUTEUR{supprimer_contacts_abonnement,contacts_abonnement-#ID_CONTACTS_ABONNEMENT-#ID_OBJET-#OBJET,[(#ENV{retour,#SELF})]})],
                   ajax,
                   <:abo:confirmer_supprimer_element:>})]
-               ] -->
+               ]
             </td>
          </tr>
          </BOUCLE_actifs>
