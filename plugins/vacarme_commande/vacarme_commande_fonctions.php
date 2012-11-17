@@ -46,7 +46,7 @@ if (!defined("_ECRIRE_INC_VERSION")) return;
       return $tva;
    }
 
-   // calculer le prix ht. Oui, il y a une api prix, sauf que qu'elle part du principe (logique) qu'une colonne prix_ht dans une base sort du... HT. Or, trimballer du prix HT amène au bout de la chaîne chez Paypal des différences de + ou - 1 centimes. Donc, on bricole : les prix sont TTC dans la base et on calcule par ce filtre le prix HT.
+   // calculer le prix ht. Oui, il y a une api prix, sauf que qu'elle part du principe (logique) qu'une colonne prix_ht dans une base sort du... HT. Or, trimballer du prix HT amène au bout de la chaîne chez Paypal des différences de + ou - 1 centime. Donc, on bricole : les prix sont TTC dans la base et on calcule par ce filtre le prix HT.
    function prixht($prix,$round='') {
       // on part du principe que le taux de TVA est uniforme pour abonnements ET produits.
 		include_spip('inc/config');
