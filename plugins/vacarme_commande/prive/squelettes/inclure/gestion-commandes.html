@@ -92,7 +92,7 @@
             <td>[(#PAIEMENT|lister_paiements)]</td>
             <td>
                <BOUCLE_detail_commande(COMMANDES_DETAILS){id_commande}{par id_commandes_detail}>
-               <p>[(#DESCRIPTIF*|typo|supprimer_numero)]</p>
+               <p>[(#QUANTITE)x ][(#DESCRIPTIF*|typo|supprimer_numero)][(#NUMERO|>{0}|oui) ([(#NUMERO)])]</p>
                </BOUCLE_detail_commande>
             </td>
             <td>#PRIX</td>
