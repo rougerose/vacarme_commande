@@ -1,0 +1,36 @@
+[(#REM) visiteur résumé : login + panier ]
+<INCLURE{fond=inclure/visiteur,env}>
+
+<INCLURE{fond=inclure/progression,composition=#ENV{composition},confirmation=#ENV{confirmation}}>
+
+<h1><:vacarme_commande:commande_annulation:></h1>
+<div class="message warning large multi">
+   <p class="information">
+      <:vacarme_commande:commande_annulation_info:>
+      <BOUCLE_message(COMMANDES_TRANSACTIONS){id_transaction}{transaction_hash}>
+      [(#MESSAGE|sinon{<:vacarme_commande:commmande_erreur_inconnue:>}).] [(#SET{id_commande,#ID_COMMANDE})]
+      </BOUCLE_message>
+   </p>
+   <BOUCLE_commande(COMMANDES){id_commande=#GET{id_commande}}>
+   <p class="explication">
+      <:vacarme_commande:commande_erreur_contact_commande{contact=#URL_PAGE{contact},commande=#REFERENCE}:>
+   </p>
+   </BOUCLE_commande>
+   <p class="action poursuivre-achats retour">
+      <a href="#URL_PAGE{panier}" class="btn large item1"><:vacarme_commande:retour_panier:></a>
+   </p>
+</div><!-- .message -->
+[(#SESSION{id_commande}|non)
+   [(#ENV{confirmation}|non)
+   <h1><:vacarme_commande:commande_annulation:></h1>
+   <div class="message warning large multi">
+      <h1><:vacarme_commande:session_expiree_titre:></h1>
+      <p class="information"><:vacarme_commande:session_expiree_info:></p>
+      <p class="explication"><:vacarme_commande:session_expiree_explication:></p>
+      <p class="action poursuivre-achats retour">
+         <a href="#URL_PAGE{panier}" class="btn large item1"><:vacarme_commande:retour_panier:></a>
+         <a href="#URL_SITE_SPIP" class="btn large item0"><:vacarme_commande:continuer_achats:></a>
+      </p>
+   </div><!-- .message -->
+   ]
+]

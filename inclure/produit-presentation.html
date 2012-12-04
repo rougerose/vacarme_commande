@@ -1,0 +1,36 @@
+<BOUCLE_produit(PRODUITS){id_produit}>
+<li[ id="(#REFERENCE)"] class="grid-6 media[ item(#ENV{compteur}|modulo{2})]">
+   <div class="body cf">
+      [(#REM) le visuel de la couverture numero/cadeau ]
+      <BOUCLE_visuel(DOCUMENTS){id_produit}{0,1}>
+      [<a href="#URL_DOCUMENT" class="img mediabox">(#FICHIER|image_reduire{220,0})</a>]
+      </BOUCLE_visuel>
+      #SET{titre,#TITRE} #SET{prix_ttc,#PRIX}
+      <BOUCLE_condition_numeros(CONDITION){si #ENV{composition}|=={numeros}}>
+      <BOUCLE_details(VACARME_NUMEROS_DETAILS){id_produit}>
+      <h2 class="grid-3 titre-numero">[<a href="(#URL)">[(#GET{titre})]</a>]</h2>
+      </BOUCLE_details>
+      <B_sommaire>
+      <div class="grid-3 texte sommaire">
+         <BOUCLE_sommaire(VACARME_NUMEROS_SOMMAIRES){id_produit}{par id_vacarme_numero_sommaire}>
+         [<h3 class="titre"><a href="section#ID_VACARME_NUMERO_SOMMAIRE">(#TITRE)</a></h3>]
+         <p id="section#ID_VACARME_NUMERO_SOMMAIRE" class="descriptif">[(#RESUME) ]<a class="savoir" href="#URL"><:vacarme_commande:savoir_plus:></a></p>
+         </BOUCLE_sommaire>
+      </div><!-- .texte -->
+      </B_sommaire>
+      </BOUCLE_condition_numeros>
+      [(#ENV{composition}|=={cadeaux}|oui)
+      <h2 class="grid-3 titre-numero">#TITRE</h2>
+      <div class="grid-3 texte">
+         <p class="descriptif">[(#TEXTE|PtoBR)]</p>
+      </div><!-- .texte -->
+      <INCLURE{fond=inclure/cadeaux_info,contenu=bouton,id_produit=#ID_PRODUIT,self=#SELF,env}>
+      ]
+   </div>
+   [<div class="pied cf">
+      (#ENV{composition}|=={numeros}|oui)
+      <p class="prix">#PRIX_HT</p>
+      [(#BOUTON_ACTION{<:ajouter_au_panier:>,#URL_ACTION_AUTEUR{remplir_panier,produit-#ID_PRODUIT-1,#SELF},ajouter})]
+   </div><!-- .pied -->]
+</li>
+</BOUCLE_produit>

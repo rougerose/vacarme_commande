@@ -1,0 +1,77 @@
+#CACHE{0}
+<BOUCLE_auteur(CONDITION){si #SESSION{id_auteur}}>
+<BOUCLE_tva_applicable(CONTACTS){id_auteur=#SESSION{id_auteur}}>
+   #SET{type_client,#TYPE_CLIENT}
+   <BOUCLE_pays(ADRESSES adresses_liens){id_auteur}>
+      [(#SET{tva_applicable,#GET{tva_applicable}|tva_applicable{#GET{type_client},#PAYS}})]
+   </BOUCLE_pays>
+</BOUCLE_tva_applicable>
+</BOUCLE_auteur>
+
+<div id="panier" class="formulaire_spip formulaire_#ENV{form}[ formulaire_#ENV{form}-(#ENV{id,nouveau})]">
+   [<p class="reponse_formulaire reponse_formulaire_ok message succes medium"><span class="information">(#ENV*{message_ok})</span></p>]
+   [<p class="reponse_formulaire reponse_formulaire_erreur message erreur medium"><span class="information">(#ENV*{message_erreur})</span></p>]
+
+   <B_contenu_panier>
+      <form method="post" action="#ENV{action}" enctype="multipart/form-data"><div>
+         [(#REM) declarer les hidden qui declencheront le service du formulaire
+         parametre : url d'action ]
+         #ACTION_FORMULAIRE{#ENV{action}}
+         <table class="table-commande" cellspacing="0">
+            <thead>
+               <tr>
+                  <th class="description"><:paniers:panier_description:></th>
+                  <th class="prix_unitaire ar"><:paniers:panier_prix_unitaire:></th>
+                  <th class="quantite ar"><:paniers:panier_quantite:></th>
+                  <th class="montant ar"><:paniers:panier_montant:></th>
+               </tr>
+            </thead>
+            <tbody>
+               <BOUCLE_contenu_panier(PANIERS_LIENS){id_panier=#ENV{_id_panier}}>
+                  [(#SET{prix_unitaire,#PRIX*{#OBJET,#ID_OBJET}})]
+                  [(#GET{tva_applicable}|?{
+                     [(#SET{total,#GET{total}|plus{#GET{prix_unitaire}|mult{#QUANTITE}}})]
+                     ,
+                     [(#SET{prix_unitaire,#GET{prix_unitaire}|prixht})]
+                     [(#SET{total,#GET{total}|plus{#GET{prix_unitaire}|round{2}|mult{#QUANTITE}}})]
+                  })]
+               <tr class="emplette[ (#ENV{erreurs}|table_valeur{quantites}|table_valeur{#OBJET}|table_valeur{#ID_OBJET}|?{erreur})]">
+                  <td class="description">
+                     #INCLURE{fond=inclure/emplette,objet=#OBJET,id_objet=#ID_OBJET,id_panier=#ID_PANIER,numero=#NUMERO}
+                  </td>
+                  <td class="prix_unitaire ar">[(#GET{prix_unitaire}|round{2}|prix_formater)]</td>
+                  <td class="quantite ar"><input type="text" class="text" size="3" name="quantites[#OBJET][#ID_OBJET]" value="[(#ENV{quantites}|table_valeur{#OBJET}|table_valeur{#ID_OBJET}|sinon{#QUANTITE})]" /></td>
+                  <td class="montant ar">[(#GET{prix_unitaire}|round{2}|mult{#QUANTITE}|prix_formater)]</td>
+               </tr>
+               </BOUCLE_contenu_panier>
+               <tr class="panier-pied livraison ar">
+                  <td colspan="3"><:vacarme_commande:frais_port:></td>
+                  <td>[(#VAL{0}|prix_formater)]</td>
+               </tr>
+               <tr class="panier-pied total_ttc ar">
+                  <td colspan="3"><:vacarme_commande:total_ttc:></td>
+                  <td class="montant">[(#GET{total}|prix_formater)]</td>
+               </tr>
+               <tr class="panier-pied taxes ar">
+                  <td colspan="3">
+                     <:vacarme_commande:tva_dont:>[ ((#CONFIG{produits/taxe}|mult{100})%)]
+                  </td>
+                  <td class="montant">
+                     [(#GET{tva_applicable}|?{
+                        [(#GET{total}|mult{#CONFIG{produits/taxe}}|prix_formater)]
+                        ,
+                        [(#VAL{0}|prix_formater)]
+                     })]
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         <p class="boutons recalculer">
+            <span class="image_loading">&nbsp;</span>
+            <input type="submit" class="submit btn large" value="<:paniers:panier_recalculer:>" />
+         </p>
+      </div></form>
+   </B_contenu_panier>
+   <p class="message info medium"><span class="information"><:paniers:panier_vide:></span></p>
+   <//B_contenu_panier>
+</div>

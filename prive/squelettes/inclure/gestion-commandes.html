@@ -1,0 +1,108 @@
+[(#REM) la liste des statuts ]
+[(#SET{statut,#ARRAY{
+   0,Tous,
+   encours,<:vacarme_commande:statut_encours:>,
+   attente,<:vacarme_commande:statut_attente:>,
+   erreur,<:vacarme_commande:statut_erreur:>
+   paye,<:vacarme_commande:statut_paye:>,
+   partiel,<:vacarme_commande:statut_partiel:>,
+   envoye,<:vacarme_commande:statut_envoye:>,
+   retour,<:vacarme_commande:statut_retour:>,
+   retour_partiel,<:vacarme_commande:statut_retour_partiel:>,
+   poubelle,Poubelle}
+})][
+(#REM) la liste des paiements ]
+[(#SET{paiement,#ARRAY{
+   0,Tous,
+   paypal,<:vacarme_commande:paiement_paypal:>,
+   cheque,<:vacarme_commande:paiement_cheque:>,
+   virement,<:vacarme_commande:paiement_virement:>}
+})]
+
+<div class="criteres cf">
+   <ul class="dropdown">
+      <li>
+         <span class="btn">
+            <:vacarme_commande:statut_label:> <strong>[(#GET{statut}|table_valeur{#ENV{statut,0}})]</strong>
+         </span>
+         <ul class="dropdown-menu">
+            [<li class="">(#SELF|parametre_url{statut,''}|lien_ou_expose{Tous,#ENV{statut,''}|=={''},ajax})</li>]
+            [<li>(#SELF|parametre_url{statut,encours}|lien_ou_expose{<:vacarme_commande:statut_encours:>,#ENV{statut}|=={encours},ajax})</li>]
+            [<li>(#SELF|parametre_url{statut,attente}|lien_ou_expose{<:vacarme_commande:statut_attente:>,#ENV{statut}|=={attente},ajax})</li>]
+            [<li>(#SELF|parametre_url{statut,erreur}|lien_ou_expose{<:vacarme_commande:statut_erreur:>,#ENV{statut}|=={erreur},ajax})</li>]
+            [<li>(#SELF|parametre_url{statut,paye}|lien_ou_expose{<:vacarme_commande:statut_paye:>,#ENV{statut}|=={paye},ajax})</li>]
+            [<li>(#SELF|parametre_url{statut,partiel}|lien_ou_expose{<:vacarme_commande:statut_partiel:>,#ENV{statut}|=={partiel},ajax})</li>]
+            [<li>(#SELF|parametre_url{statut,envoye}|lien_ou_expose{<:vacarme_commande:statut_envoye:>,#ENV{statut}|=={envoye},ajax})</li>]
+            [<li>(#SELF|parametre_url{statut,retour}|lien_ou_expose{<:vacarme_commande:statut_retour:>,#ENV{statut}|=={retour},ajax})</li>]
+            [<li>(#SELF|parametre_url{statut,retour_partiel}|lien_ou_expose{<:vacarme_commande:statut_retour_partiel:>,#ENV{statut}|=={retour_partiel},ajax})</li>]
+            [<li>(#SELF|parametre_url{statut,poubelle}|lien_ou_expose{Poubelle,#ENV{statut}|=={poubelle},ajax})</li>]
+         </ul>
+      </li>
+   </ul>
+   <ul class="dropdown">
+      <li>
+         <span class="btn"><:vacarme_commande:paiement:> : <strong>[(#GET{paiement}|table_valeur{#ENV{paiement,0}})]</strong></span>
+         <ul class="dropdown-menu">
+            [<li>(#SELF|parametre_url{paiement,''}|lien_ou_expose{Tous,#ENV{paiement,''}|=={''},ajax})</li>]
+            [<li>(#SELF|parametre_url{paiement,paypal}|lien_ou_expose{<:vacarme_commande:paiement_paypal:>,#ENV{paiement}|=={paypal},ajax})</li>]
+            [<li>(#SELF|parametre_url{paiement,cheque}|lien_ou_expose{<:vacarme_commande:paiement_cheque:>,#ENV{paiement}|=={cheque},ajax})</li>]
+            [<li>(#SELF|parametre_url{paiement,virement}|lien_ou_expose{<:vacarme_commande:paiement_virement:>,#ENV{paiement}|=={virement},ajax})</li>]
+         </ul>
+      </li>
+   </ul>
+</div><!-- .criteres -->
+
+<div class="resultats">
+   <B_commandes>
+   [<p class="total">(#GRAND_TOTAL|affiche_un_ou_plusieurs{<:vacarme_commande:nb_commande:>,<:vacarme_commande:nb_commandes:>})</p>]
+   <div class='pagination tri'>
+      [(#TRI{'<',#CHEMIN{img_pack/tri_asc-16.png}|tag_img{<:medias:par_tri_croissant:>}}) |]
+      [(#TRI{'>',#CHEMIN{img_pack/tri_desc-16.png}|tag_img{<:medias:par_tri_decroissant:>}}) |]
+      [(#TRI{id_commande,<:medias:par_id:>}) |]
+      [(#TRI{date,par date commande}) |]
+      [(#TRI{date_paiement,par date paiement}) |]
+   </div>
+   [<div class="pagination">(#PAGINATION{page})</div>]
+   <table id="resultats" class="tableau">
+      <thead>
+         <tr>
+            <th><input type="checkbox" name="checkAll"></th>
+            <th>#</th>
+            <th>Référence</th>
+            <th>Statut</th>
+            <th>Client</th>
+            <th>Date commande</th>
+            <th>Date paiement</th>
+            <th>Paiement</th>
+            <th>Détails</th>
+            <th>Montant</th>
+            <th></th>
+         </tr>
+      </thead>
+      <tbody>
+         <BOUCLE_commandes(COMMANDES){statut ?= #ENV{statut}}{paiement ?= #ENV{paiement}}{tri id_commande,inverse}{pagination 20}>
+         <tr class="[(#COMPTEUR_BOUCLE|alterner{impair,pair})]">
+            <td><input type="checkbox" name="commande[]" value="#ID_COMMANDE"></td>
+            <td>#ID_COMMANDE</td>
+            <td>#REFERENCE</td>
+            <td>[(#STATUT|lister_statuts)]</td>
+            <td><BOUCLE_contact(CONTACTS){id_auteur}><a href="[(#URL_ECRIRE{auteur_infos}|parametre_url{id_auteur,#ID_AUTEUR})]">#PRENOM #NOM</a></BOUCLE_contact></td>
+            <td>[(#DATE|affdate{d/m/y})]</td>
+            <td>[(#DATE_PAIEMENT|affdate|=={0}|?{'&mdash;',[(#DATE_PAIEMENT|affdate{d/m/y})]})]</td>
+            <td>[(#PAIEMENT|lister_paiements)]</td>
+            <td>
+               <BOUCLE_detail_commande(COMMANDES_DETAILS){id_commande}{par id_commandes_detail}>
+               <p>[(#QUANTITE)x ][(#DESCRIPTIF*|typo|supprimer_numero)][(#NUMERO|>{0}|oui) ([(#NUMERO)])]</p>
+               </BOUCLE_detail_commande>
+            </td>
+            <td>#PRIX</td>
+            <td><a href="[(#URL_ECRIRE{commande_voir}|parametre_url{id_commande,#ID_COMMANDE})]">Voir</a></td>
+         </tr>
+         </BOUCLE_commandes>
+      </tbody>
+   </table>
+   <INCLURE{fond=prive/squelettes/inclure/exporter,env,ajax}>
+   </B_commandes>
+   <p class="total">Aucune commande</p>
+   <//B_commandes>
+</div>

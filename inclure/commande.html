@@ -1,0 +1,133 @@
+#SET{details, #ARRAY} #SET{detail,''} #SET{tva,#CONFIG{produits/taxe}} #SET{tva_applicable,' '} #SET{cadeau,''}
+
+[(#ENV{contexte}|=={commande}|oui)
+   <h2><:vacarme_commande:votre_commande:></h2>]
+[(#REM) On peut donner soit un id_commande, soit un tableau contenant la commande ]
+<BOUCLE_commande(COMMANDES){tous}{id_commande=#ENV{id_commande}}{statut?}>
+   [(#REM) Si on trouve une commande on prend ça comme base ]
+   #SET{id_commande,#ID_COMMANDE} #SET{id_auteur,#ID_AUTEUR} #SET{reference,#REFERENCE}
+
+   <BOUCLE_tva_applicable(CONTACTS){id_auteur=#ID_AUTEUR}>
+   #SET{type_client,#TYPE_CLIENT}
+   <BOUCLE_pays(ADRESSES adresses_liens){id_auteur}>
+      [(#SET{tva_applicable,#GET{tva_applicable}|tva_applicable{#GET{type_client},#PAYS}})]
+   </BOUCLE_pays>
+   </BOUCLE_tva_applicable>
+
+   <BOUCLE_commande_details(COMMANDES_DETAILS){id_commande}{par id_commandes_detail}>
+
+   [(#REM) si le panier contient un abonnement ? On récupère le détail ]
+   <BOUCLE_condition_abonnement(CONDITION){si #OBJET|=={abonnement}}>
+      <BOUCLE_abonnement(ABONNEMENTS){id_abonnement=#ID_OBJET}>
+      [(#SET{duree,#INFO_DUREE{#OBJET,#ID_OBJET}|div{12}})][(#SET{nombre_numeros,#INFO_DUREE{#OBJET,#ID_OBJET}|div{3}})]
+      [(#SET{detail,
+         [(#GET{duree}|singulier_ou_pluriel{vacarme_commande:nb_an,vacarme_commande:nb_ans})][ &#x0028;(#GET{nombre_numeros}|singulier_ou_pluriel{vacarme_commande:nb_numero,vacarme_commande:nb_numeros})&#x0029;,][ <:vacarme_commande:numero_a_partir:> (#NUMERO)]})]
+      </BOUCLE_abonnement>
+   </BOUCLE_condition_abonnement>
+
+   <BOUCLE_condition_cadeau(CONDITION){si #OBJET|=={produit}}>
+      <BOUCLE_cadeau(PRODUITS){id_produit=#ID_OBJET}>
+      [(#REFERENCE|match{kdo}|?{
+         #SET{detail,<:vacarme_commande:cadeau_detail:>}
+         ,
+         #SET{detail,''}
+      })]
+      </BOUCLE_cadeau>
+   </BOUCLE_condition_cadeau>
+   [(#SET{prix_unitaire,#PRIX*{#OBJET,#ID_OBJET}})]
+   [(#GET{tva_applicable}|?{
+      [(#SET{total,#GET{total}|plus{#GET{prix_unitaire}|mult{#QUANTITE}}})]
+      ,
+      [(#SET{prix_unitaire,#GET{prix_unitaire}|prixht})]
+      [(#SET{total,#GET{total}|plus{#GET{prix_unitaire}|round{2}|mult{#QUANTITE}}})]
+   })]
+   [(#SET_PUSH{details, [(#ARRAY{
+      descriptif, [(#DESCRIPTIF*|supprimer_numero)],
+      detail, #GET{detail},
+      quantite, #QUANTITE,
+      prix, #GET{prix_unitaire},
+   })]})]
+   </BOUCLE_commande_details>
+   #SET{commande, #ARRAY{details, #GET{details}}}
+</BOUCLE_commande>
+#SET{commande,#ENV{commande}}
+<//B_commande>
+
+[(#REM) Le récap de la commande ]
+<BOUCLE_test_contexte_commande(CONDITION){si #ENV{contexte}|match{^(commande|compte|facture)$}}>
+<table[ id="commande(#ENV{id_commande})"] class="table-commande" cellspacing="0">
+   <thead>
+      <tr>
+         <th class="description"><:paniers:panier_description:></th>
+         <th class="prix_unitaire ar"><:paniers:panier_prix_unitaire:></th>
+         <th class="quantite ar"><:paniers:panier_quantite:></th>
+         <th class="montant ar"><:paniers:panier_montant:></th>
+      </tr>
+   </thead>
+   <tbody>
+      <BOUCLE_details(POUR){tableau #GET{commande}|table_valeur{details}}>
+      <tr class="emplette">
+         <td class="description">
+            <h2>[(#VALEUR|table_valeur{descriptif})]</h2>
+            [<ul>
+               <li>
+                  (#VALEUR|table_valeur{detail})
+               </li>
+            </ul>]
+         </td>
+         <td class="prix_unitaire ar">[(#VALEUR|table_valeur{prix}|round{2}|prix_formater)]</td>
+         <td class="quantite ar">[(#VALEUR|table_valeur{quantite})]</td>
+         <td class="montant ar">[(#VALEUR|table_valeur{prix}|round{2}|mult{#VALEUR|table_valeur{quantite}}|prix_formater)]</td>
+      </tr>
+      </BOUCLE_details>
+      <tr class="panier-pied livraison ar">
+         <td colspan="3"><:vacarme_commande:frais_port:></td>
+         <td>[(#VAL{0}|prix_formater)]</td>
+      </tr>
+      <tr class="panier-pied total_ttc ar">
+         <td colspan="3"><:vacarme_commande:total_ttc:></td>
+         <td class="montant">[(#GET{total}|prix_formater)]</td>
+      </tr>
+      <tr class="panier-pied taxes ar">
+         <td colspan="3">
+            <:vacarme_commande:tva_dont:>[ ((#CONFIG{produits/taxe}|mult{100})%)]
+         </td>
+         <td class="montant">
+            [(#GET{tva_applicable}|?{
+               [(#GET{total}|mult{#CONFIG{produits/taxe}}|prix_formater)]
+               ,
+               [(#VAL{0}|prix_formater)]
+            })]
+         </td>
+      </tr>
+   </tbody>
+</table>
+</BOUCLE_test_contexte_commande>
+[(#REM) Les formulaires de paiement ]
+
+<BOUCLE_test_contexte_paiements(CONDITION){si #ENV{contexte}|=={paiements}}>
+<BOUCLE_transaction(COMMANDES_TRANSACTIONS){tout}{id_commande=#GET{id_commande}}>
+<div id="paiements" class="tabs">
+   <h2><:vacarme_commande:votre_reglement:></h2>
+   <ul>
+      <li><a href="#paypal">Paypal</a></li>
+      <li><a href="#cheque">Chèque</a></li>
+      <li><a href="#virement">Virement bancaire</a></li>
+   </ul>
+   <div id="paypal" class="option cf">
+      <p class="infos"><:vacarme_commande:paiement_paypal_message_explication:></p>
+      #PAYER_ACTE{paypal,#ID_TRANSACTION,#TRANSACTION_HASH,''}
+   </div><!-- #paypal -->
+
+   <div id="cheque" class="option cf">
+      <p class="infos"><:vacarme_commande:paiement_cheque_message_explication:></p>
+      #PAYER_ACTE{cheque,#ID_TRANSACTION,#TRANSACTION_HASH,''}
+   </div><!-- #cheque -->
+
+   <div id="virement" class="option cf">
+      <p class="infos"><:vacarme_commande:paiement_virement_message_explication:></p>
+      #PAYER_ACTE{virement,#ID_TRANSACTION,#TRANSACTION_HASH,''}
+   </div><!-- #virement -->
+</div><!-- .tabs -->
+</BOUCLE_transaction>
+</BOUCLE_test_contexte_paiements>

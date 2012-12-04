@@ -1,0 +1,78 @@
+<plugin>
+   <nom>Vacarme Commande</nom>
+   <auteur>cld</auteur>
+   <licence>GNU/GLP</licence>
+   <icon>img/vacarme_commande-32.png</icon>
+   <version>0.1</version>
+   <version_base>0.3</version_base>
+   <description>
+      Vacarme Commande
+   </description>
+   <etat>dev</etat>
+   <prefix>vacarme_commande</prefix>
+   <options>vacarme_commande_options.php</options>
+   <install>base/vacarme_commande_install.php</install>
+   <pipeline>
+      <nom>autoriser</nom>
+      <inclure>inc/vacarme_commande_autorisations.php</inclure>
+   </pipeline>
+	<pipeline>
+		<nom>declarer_tables_interfaces</nom>
+		<inclure>base/vacarme_commande.php</inclure>
+	</pipeline>
+   <pipeline>
+      <nom>declarer_tables_principales</nom>
+      <inclure>base/vacarme_commande.php</inclure>
+   </pipeline>
+   <pipeline>
+      <nom>insert_head_css</nom>
+      <inclure>vacarme_commande_pipelines.php</inclure>
+   </pipeline>
+   <pipeline>
+   	<nom>header_prive</nom>
+   	<inclure>vacarme_commande_pipelines.php</inclure>
+   </pipeline>
+   <pipeline>
+      <nom>insert_head</nom>
+      <inclure>vacarme_commande_pipelines.php</inclure>
+   </pipeline>
+   <pipeline>
+      <nom>post_edition</nom>
+      <inclure>vacarme_commande_pipelines.php</inclure>
+   </pipeline>
+   <pipeline>
+      <nom>post_insertion</nom>
+      <inclure>vacarme_commande_pipelines.php</inclure>
+   </pipeline>
+   <pipeline>
+      <nom>traitement_paypal</nom>
+      <inclure>vacarme_commande_pipelines.php</inclure>
+   </pipeline>
+   <pipeline>
+      <nom>bank_traiter_reglement</nom>
+      <inclure>vacarme_commande_pipelines.php</inclure>
+   </pipeline>
+   <fonctions>vacarme_commande_fonctions.php</fonctions>
+   <bouton id='vacarme21' parent='bando_edition'>
+      <titre>Vacarme</titre>
+      <icone>img/vacarme-16.png</icone>
+      <url>vacarme</url>
+   </bouton>
+   <utilise id="zcommerce" version="[0.3.2;]" /><!-- à supprimer en prod ? -->
+   <utilise id="snippets" version="[0.2.0;]" />
+   <utilise id="contacts" version="[1.13.5;]" />
+   <utiliser id="bank" version="[2.1.1;]" />
+   <utiliser id="commandes_paniers" version="[0.1.2;]" />
+   <necessite id="SPIP" version="[2.1.10;2.1.99]" />
+   <necessite id="Z" version="[1.7.19;]" />
+   <necessite id="spip_bonux" version="[2.2.17;]" />
+   <necessite id="paypal" version="[0.2.0;]" />
+   <necessite id="paniers" version="[0.3.3;]" />
+   <necessite id="prix" version="[0.1.5;]" />
+   <necessite id="saisies" version="[1.9.0;]" />
+   <necessite id="coordonnees" version="[1.4.8;]" />
+   <necessite id="abonnement" version="[1.4.1;]" />
+   <necessite id="commandes" version="[0.4.9;]" />
+   <necessite id="compositions" version="[2.1.6;]" />
+   <necessite id="jqueryui" version="[1.6.0;]" />
+</plugin>
