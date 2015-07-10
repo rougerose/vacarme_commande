@@ -86,7 +86,7 @@
             <td>#ID_COMMANDE</td>
             <td>#REFERENCE</td>
             <td>[(#STATUT|lister_statuts)]</td>
-            <td><BOUCLE_contact(CONTACTS){id_auteur}><a href="[(#URL_ECRIRE{auteur_infos}|parametre_url{id_auteur,#ID_AUTEUR})]">#PRENOM #NOM</a></BOUCLE_contact></td>
+            <td><BOUCLE_contact(CONTACTS){id_auteur}{0,1}><a href="[(#URL_ECRIRE{auteur_infos}|parametre_url{id_auteur,#ID_AUTEUR})]">#PRENOM #NOM</a></BOUCLE_contact></td>
             <td>[(#DATE|affdate{d/m/y})]</td>
             <td>[(#DATE_PAIEMENT|affdate|=={0}|?{'&mdash;',[(#DATE_PAIEMENT|affdate{d/m/y})]})]</td>
             <td>[(#PAIEMENT|lister_paiements)]</td>

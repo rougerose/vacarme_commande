@@ -10,7 +10,7 @@ define('_DEBUG_VACARME',true);
 define('_RENOUVELLE_ALEA',3600); // utile de modifier l'aléa pour les sessions ?
 
 // TVA des abonnements
-define('_TVA_ABONNEMENT',0.07);
+define('_TVA_ABONNEMENT',0.055);
 
 // remplacer la fonction prix_formater du plugin prix qui ne marche pas comme attendu
 function prix_format($prix){
