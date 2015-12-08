@@ -1,24 +1,2 @@
 # fichiers systemes
 .DS_Store
-.tm_properties
-
-# projet spip : les fichiers et dossiers ignorés
-.htaccess
-htaccess.txt
-/config
-/ecrire
-/extensions
-/IMG
-index.php
-/local
-/prive
-rien.gif
-spip.php
-/squelettes-dist
-svn.revision
-/tmp
-/plugins/*
-
-# excepte
-!/plugins/vacarme_commande
-!/plugins/vacarme_numeros
