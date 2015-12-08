@@ -32,7 +32,7 @@
    function vacarme_commande_header_prive($flux){
    	$js = find_in_path('prive/squelettes/javascript/vacarme_commande_prive.js');
    	$flux .= "\n<script type='text/javascript' src='$js'></script>\n";
-   	$css = generer_url_public('prive/squelettes/css/vacarme_commande_prive.css');
+   	$css = generer_url_prive('prive/squelettes/css/vacarme_commande_prive.css');
    	$flux .= "\n<link rel='stylesheet' href='$css' type='text/css' media='all' />\n";
    	return $flux;
    }
