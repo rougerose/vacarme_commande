@@ -28,7 +28,7 @@
       </div><!-- .texte -->
       <INCLURE{fond=inclure/cadeaux_info,contenu=bouton,id_produit=#ID_PRODUIT,self=#SELF,env}>
       ][(#GET{numero_epuise}|oui)
-        <div class="stock--out">
+        <div class="stockOut stockOut--abs">
           <:vacarme_commande:numero_epuise:>
         </div>
       ]

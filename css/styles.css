@@ -877,16 +877,22 @@ ul.spip {list-style-type: square;}
    }
 
    /* numéro épuisé */
-   .stock--out {
-     bottom: 10%;
-     position: absolute;
-     width: 48%;
+   .stockOut {
+     margin: 0;
+     clear: both;
      padding: 0.5em;
      background: #d21919;
      color: #fff;
      font-family: "HelveticaNeueLTStdCnBold","Helevetica Neue",Helvetica,sans-serif;
      text-align: center;
      text-transform: uppercase;
+   }
+
+   .stockOut--abs {
+     bottom: 10%;
+     position: absolute;
+     width: 48%;
+     clear: none;
    }
 
    /* boutons */
