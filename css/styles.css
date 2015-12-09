@@ -523,7 +523,10 @@ ul.spip {list-style-type: square;}
    .presentation.cadeaux .media {
       margin-bottom: 3em;
    }
-   .presentation .body { margin-bottom: .5em; }
+   .presentation .body {
+     margin-bottom: .5em;
+     position: relative;
+   }
    .presentation.cadeaux .body {margin-bottom: 2em;}
    .presentation.cadeaux .body .bouton_action_post.ajouter {text-align: center;}
       .presentation.numeros .body .img { display: block; margin-right: 0; }
@@ -811,7 +814,7 @@ ul.spip {list-style-type: square;}
 /* =============== */
 /* = Savoir plus = */
 /* =============== */
-.savoir {  }
+/*.savoir {  }*/
 
 /* ============== */
 /* = Pagination = */
@@ -873,6 +876,18 @@ ul.spip {list-style-type: square;}
       margin-bottom: 1em;
    }
 
+   /* numéro épuisé */
+   .stock--out {
+     bottom: 10%;
+     position: absolute;
+     width: 48%;
+     padding: 0.5em;
+     background: #d21919;
+     color: #fff;
+     font-family: "HelveticaNeueLTStdCnBold","Helevetica Neue",Helvetica,sans-serif;
+     text-align: center;
+     text-transform: uppercase;
+   }
 
    /* boutons */
    .ajouter,
