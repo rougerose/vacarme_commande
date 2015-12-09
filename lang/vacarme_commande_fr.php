@@ -184,6 +184,7 @@ Pour toutes questions relatives à votre commande, n'hésitez pas à nous contac
    'nb_numero' => '1 numéro',
    'nb_numeros' => '@nb@ numéros',
    'numero_a_partir' => "à partir du numéro",
+   'numero_epuise' => "Numéro épuisé",
 
 	// O
 	'organisation' => 'Organisation',

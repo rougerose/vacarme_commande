@@ -1,4 +1,6 @@
 <BOUCLE_produit(PRODUITS){id_produit}>
+[(#SET{numero_epuise,''})]
+[(#DESCRIPTIF*|match{épuisé}|oui)#SET{numero_epuise,' '}]
 <li[ id="(#REFERENCE)"] class="grid-6 media[ item(#ENV{compteur}|modulo{2})]">
    <div class="body cf">
       [(#REM) le visuel de la couverture numero/cadeau ]
@@ -25,12 +27,18 @@
          <p class="descriptif">[(#TEXTE|PtoBR)]</p>
       </div><!-- .texte -->
       <INCLURE{fond=inclure/cadeaux_info,contenu=bouton,id_produit=#ID_PRODUIT,self=#SELF,env}>
+      ][(#GET{numero_epuise}|oui)
+        <div class="stock--out">
+          <:vacarme_commande:numero_epuise:>
+        </div>
       ]
    </div>
+   [(#GET{numero_epuise}|non)
    [<div class="pied cf">
       (#ENV{composition}|=={numeros}|oui)
       <p class="prix">#PRIX_HT</p>
       [(#BOUTON_ACTION{<:ajouter_au_panier:>,#URL_ACTION_AUTEUR{remplir_panier,produit-#ID_PRODUIT-1,#SELF},ajouter})]
    </div><!-- .pied -->]
+   ]
 </li>
 </BOUCLE_produit>
