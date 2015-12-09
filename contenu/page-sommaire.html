@@ -3,7 +3,7 @@
 
 <div class="grids">
    <ul class="presentation sommaire">
-      <BOUCLE_dernier_numero(PRODUITS){id_rubrique=2}{!par titre}{0,1}{doublons}>[(#SET{reference,#REFERENCE})]
+      <BOUCLE_dernier_numero(PRODUITS){id_rubrique=2}{!par titre}{0,1}{doublons}>[(#SET{reference,#REFERENCE})][(#SET{numero_epuise,''})][(#DESCRIPTIF*|match{épuisé}|oui)#SET{numero_epuise,' '}]
       <li id="numero-last" class="media numero une body">
          <h1 class="intertitre"><a href="[(#URL_RUBRIQUE{2}|ancre_url{#GET{reference}})]"><:vacarme_commande:dernier_numero_paru:></a></h1>
          <BOUCLE_couverture(DOCUMENTS){id_produit}{0,1}>
@@ -16,7 +16,11 @@
             <BOUCLE_saison_dn(VACARME_NUMEROS_DETAILS){id_produit=#ID_PRODUIT}>
             <p class="saison infos">#SAISON #ANNEE</p>
             </BOUCLE_saison_dn>
-            <p class="prix infos">[(#PRIX*|prix_format)&euro;]</p>
+            [(#GET{numero_epuise}|non)
+              <p class="prix infos">[(#PRIX*|prix_format)&euro;]</p>
+            ][(#GET{numero_epuise}|oui)
+              <div class="stockOut" style="margin-bottom:24px;"><:vacarme_commande:numero_epuise:></div>
+            ]
          </div><!-- .texte -->
       </li>
       </BOUCLE_dernier_numero>
@@ -42,7 +46,7 @@
       <B_autres_numeros>
       <li class="media numeros selection">
          <h1 class="intertitre"><:vacarme_commande:precedents_numeros:></h1>
-         <BOUCLE_autres_numeros(PRODUITS){id_rubrique=2}{!par titre}{0,6}{doublons}>[(#SET{reference,#REFERENCE})]
+         <BOUCLE_autres_numeros(PRODUITS){id_rubrique=2}{!par titre}{0,6}{doublons}>[(#SET{reference,#REFERENCE})][(#SET{numero_epuise,''})][(#DESCRIPTIF*|match{épuisé}|oui)#SET{numero_epuise,' '}]
          <div class="grid-2 img colonne[ item(#COMPTEUR_BOUCLE|modulo{6})]">
             <BOUCLE_couv(DOCUMENTS){id_produit}{0,1}>
             [<a href="[(#URL_RUBRIQUE{2}|ancre_url{#GET{reference}})]" class="a_img">(#FICHIER|image_reduire{140,0})</a>]
@@ -51,7 +55,11 @@
             <BOUCLE_saison(VACARME_NUMEROS_DETAILS){id_produit}>
             <p class="saison infos">#SAISON #ANNEE</p>
             </BOUCLE_saison>
-            <p class="prix infos">[(#PRIX*|prix_format)&euro;]</p>
+            [(#GET{numero_epuise}|oui)
+              <p class="stockOut"><:vacarme_commande:numero_epuise:></p>
+            ][(#GET{numero_epuise}|non)
+              <p class="prix infos">[(#PRIX*|prix_format)&euro;]</p>
+            ]
          </div>
          </BOUCLE_autres_numeros>
       </li>
