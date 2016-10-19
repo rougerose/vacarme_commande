@@ -28,18 +28,7 @@
 #SET_PUSH{numeros_valeur,#GET{titre_complet}} #SET_PUSH{numeros_cle,#GET{cle}}
 </BOUCLE_numeros>
 [(#SET{numeros,#GET{numeros_cle}|array_combine{#GET{numeros_valeur}}})]
-[(#REM)
-  <!-- TODO: voir note ci-dessous -->
-  <!--  Note du 09/12/2015: Le numéro 73 est épuisé. Par conséquent, on ne propose un abonnement
-        qu'à partir du prochain numéro.
-        On extrait la clé 0 du tableau numeros_cle (74 au 9/12/2015) et on ne
-        garde que cette valeur dans le tableau numeros.
-        A partir du numéro 75, il faudra modifier pour ne garder que les valeurs
-        0 et 1. Puis rétablir tout à partir du numéro Printemps.
-  -->
-]
-  [(#SET{key,#GET{numeros_cle}|table_valeur{0}})]
-  [(#SET{numeros,#ARRAY{#GET{key},#GET{numeros}|table_valeur{#GET{key}}}})]
+
 <div class='formulaire_spip formulaire_#FORM'>
 
    [<p class="reponse_formulaire reponse_formulaire_ok">(#ENV**{message_ok})</p>]
@@ -56,7 +45,7 @@
             label=<:vacarme_commande:label_numero_depart:>,
             obligatoire=oui, info_obligatoire='',
             cacher_option_intro=oui,
-            valeur_forcee=#GET{numeros_cle}|table_valeur{0},
+            valeur_forcee=#GET{numeros_cle}|table_valeur{1},
             datas=#GET{numeros}
          })]
       </ul>
